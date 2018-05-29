@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<style>
+  body {
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+</style>
+
+<canvas id="gameCanvas" width=window.innerWidth height=window.innerHeight></canvas>
+
+<script>
+
+  class Chaser{
+    constructor(startingX,startingY){
+      this.x = startingX;
+      this.y = startingY;
+      this.speed = 0.4;
+    }
+    updateChaser(){
+      if(this.x+chaserWidth/2 < mouseX){
+        this.x += this.speed + Math.random()*3;
+      }
+      if(this.x+chaserWidth/2 > mouseX){
+         this.x -= this.speed + Math.random()*3;
+      }
+      if(this.y+chaserHeight/2 < mouseY){
+        this.y += this.speed + Math.random()*3;
+      }
+      if(this.y+chaserHeight/2 > mouseY){
+        this.y -= this.speed + Math.random()*3;
+      }
+      if(this.speed < maxChaseSpeed){
+        this.speed+= 0.001;
+      }
+      canvasContext.fillStyle = "red";
+      canvasContext.fillRect(this.x,this.y,chaserWidth,chaserHeight);
+    }
+    checkCollision(){
+      if(this.y<=mouseY && this.y+chaserHeight>=mouseY && this.x<=mouseX && this.x+chaserWidth>=mouseX){
+        playing = false;
+        winning = false;
+        loserImage();
+      }
+    }
+  }
+  var framesPerSecond = 60;
+  var playing = false;
+  var canvas;
+  var canvasContext;
+  var chaserX = 50;
+  var chaserY = 50;
+  var mouseX;
+  var mouseY;
+  var chaseSpeed = 1.0;
+  var chaserWidth = 30;
+  var chaserHeight = 30;
+  var maxChaseSpeed = 8;
+  var elapsedTime = 0.0;
+  var chasers = [];
+  var windowWidth = 0;
+  var windowHeight = 0;
+  var score = -1;
+  var winning = true;
+
+  window.onload = function() {
+    canvas = document.getElementById("gameCanvas");
+    canvasContext = canvas.getContext("2d");
+    windowWidth = window.innerWidth;
+    windowHeight = window.innerHeight;
+    canvasContext.canvas.width  = windowWidth;
+    canvasContext.canvas.height = windowHeight;
+    canvas.addEventListener("mousemove",function(evt){
+      calculateMousePos(evt)}
+    );
+    canvas.addEventListener("click",function(){
+      pause()}
+    );
+    gameSetup();
+    canvasContext.font = "120px Comic Sans";
+    canvasContext.fillStyle = "white";
+    canvasContext.fillText("Avoid the boxes.",windowWidth/3,windowHeight/3);
+    canvasContext.fillText("Click to begin the game.",windowWidth/4,windowHeight/3+120);
+    canvasContext.font = "60px Comic Sans";
+    canvasContext.fillText("(Click during the game to increase intensity.)",windowWidth/3.7,windowHeight/3+195);
+    setInterval(gameUpdate, 1000/framesPerSecond);
+  }
+
+  function reset(){
+    gameSetup();
+    canvasContext.font = "120px Comic Sans";
+    canvasContext.fillStyle = "white";
+    canvasContext.fillText("Avoid the boxes.",windowWidth/3,windowHeight/3);
+    canvasContext.fillText("Click to begin the game.",windowWidth/4,windowHeight/3+120);
+    canvasContext.font = "60px Comic Sans";
+    canvasContext.fillText("(Click during the game to increase intensity.)",windowWidth/3.7,windowHeight/3+195);
+
+    chasers = []
+    score = 0.0;
+    winning = true;
+  }
+
+  function calculateMousePos(evt){
+    var rect = canvas.getBoundingClientRect();
+    var root = document.documentElement;
+    mouseX = evt.clientX - rect.left - root.scrollLeft;
+    mouseY = evt.clientY - rect.top - root.scrollTop;
+  }
+
+  function loserImage() {
+    var img = new Image();
+    img.onload = function () {
+      canvasContext.drawImage(img, windowWidth/2-175, windowHeight/2-175);
+    }
+    img.src = "https://3.bp.blogspot.com/-BsxgPoShd_c/V-gjlSdEVnI/AAAAAAAATHY/fa9IfS2DYFI5XhyjFoCcaml-JH0IqwW9gCLcB/s1600/so-sad-emoji.png";
+}
+
+  function pause(){
+    if(winning){
+      playing = true;
+      for(i = 0;i<10;i++){
+        chasers.push(new Chaser(Math.floor((Math.random() * windowWidth) + 1),Math.floor((Math.random() * windowHeight) + 1)));
+      }
+      score += 10;
+    }
+    else{
+      reset();
+    }
+  }
+
+  function gameSetup() {
+    canvasContext.fillStyle = "black";
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function update(){
+      for(i=0;i<chasers.length;i++){
+        chasers[i].updateChaser();
+        chasers[i].checkCollision();
+      }
+      canvasContext.font = "30px Comic Sans";
+      canvasContext.fillStyle = "white";
+      canvasContext.fillText(Math.floor(score)+"pts",10,50);
+      score += 1/framesPerSecond;
+  }
+
+  function gameUpdate(){
+    if(playing){
+      gameSetup();
+      update();
+      elapsedTime += 1000/framesPerSecond;
+      if(elapsedTime > 1000){
+        chasers.push(new Chaser(Math.floor((Math.random() * windowWidth) + 1),Math.floor((Math.random() * windowHeight) + 1)))
+        elapsedTime = 0;
+
+      }
+    }
+  }
+
+</script>
+
+</html>
