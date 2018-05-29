@@ -14,41 +14,62 @@
 <canvas id="gameCanvas" width=window.innerWidth height=window.innerHeight></canvas>
 
 <script>
-
   class Chaser{
     constructor(startingX,startingY){
-      this.x = startingX;
-      this.y = startingY;
-      this.speed = 0.4;
+      this.position = [startingX,startingY];
+      this.velocity = [0,0];
+      this.acceleration = 0.1;
+      this.uniqueMaxSpeed = maxChaseSpeed + Math.random()*5-2.5;
+      this.acceleration = this.acceleration + Math.random()*0.3;
+      this.chaserWidth = chaserWidth+(Math.random()*10-3);
+      this.chaserHeight = this.chaserWidth;
+    }
+    getPosition(){
+      return this.position;
     }
     updateChaser(){
-      if(this.x+chaserWidth/2 < mouseX){
-        this.x += this.speed + Math.random()*3;
+      if(this.position[0]+this.chaserWidth/2 < mouseX){
+        if(this.velocity[0] < this.uniqueMaxSpeed){
+          this.velocity[0] += this.acceleration;
+        }
       }
-      if(this.x+chaserWidth/2 > mouseX){
-         this.x -= this.speed + Math.random()*3;
+      if(this.position[0]+this.chaserWidth/2 > mouseX){
+        if(this.velocity[0] > -this.uniqueMaxSpeed){
+          this.velocity[0] -= this.acceleration;
+        }
       }
-      if(this.y+chaserHeight/2 < mouseY){
-        this.y += this.speed + Math.random()*3;
+      if(this.position[1]+this.chaserHeight/2 < mouseY){
+        if(this.velocity[1] < this.uniqueMaxSpeed){
+          this.velocity[1] += this.acceleration;
+        }
       }
-      if(this.y+chaserHeight/2 > mouseY){
-        this.y -= this.speed + Math.random()*3;
+      if(this.position[1]+this.chaserHeight/2 > mouseY){
+        if(this.velocity[1] > -this.uniqueMaxSpeed){
+          this.velocity[1] -= this.acceleration;
+        }
       }
-      if(this.speed < maxChaseSpeed){
-        this.speed+= 0.001;
-      }
+
+      this.position[0] += this.velocity[0];
+      this.position[1] += this.velocity[1];
+
       canvasContext.fillStyle = "red";
-      canvasContext.fillRect(this.x,this.y,chaserWidth,chaserHeight);
+      canvasContext.fillRect(this.position[0],this.position[1],this.chaserWidth,this.chaserHeight);
     }
     checkCollision(){
-      if(this.y<=mouseY && this.y+chaserHeight>=mouseY && this.x<=mouseX && this.x+chaserWidth>=mouseX){
+      if(this.position[1]+this.chaserHeight >= windowHeight || this.position[1] <= 0){
+        this.velocity[1] = 0;
+      }
+      if(this.position[0]+this.chaserWidth >= windowWidth || this.position[0] <= 0){
+        this.velocity[0] = 0;
+      }
+      if(this.position[1]<=mouseY && this.position[1]+this.chaserHeight>=mouseY && this.position[0]<=mouseX && this.position[0]+this.chaserWidth>=mouseX){
         playing = false;
         winning = false;
         loserImage();
       }
     }
   }
-  var framesPerSecond = 60;
+  var framesPerSecond = 120;
   var playing = false;
   var canvas;
   var canvasContext;
@@ -57,14 +78,14 @@
   var mouseX;
   var mouseY;
   var chaseSpeed = 1.0;
-  var chaserWidth = 30;
-  var chaserHeight = 30;
-  var maxChaseSpeed = 8;
+  var chaserWidth = 10;
+  var chaserHeight = 10;
+  var maxChaseSpeed = 5;
   var elapsedTime = 0.0;
-  var chasers = [];
   var windowWidth = 0;
   var windowHeight = 0;
   var score = -1;
+  var chasers = [];
   var winning = true;
 
   window.onload = function() {
@@ -139,8 +160,8 @@
 
   function update(){
       for(i=0;i<chasers.length;i++){
-        chasers[i].updateChaser();
         chasers[i].checkCollision();
+        chasers[i].updateChaser();
       }
       canvasContext.font = "30px Comic Sans";
       canvasContext.fillStyle = "white";
