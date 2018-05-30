@@ -16,7 +16,7 @@
 <canvas id="gameCanvas" width=window.innerWidth height=window.innerHeight></canvas>
 
 <script>
-
+  alert("build: 1");
   var mouseX = window.innerWidth/2
   var framesPerSecond = 60;
   var score = 0;
@@ -26,16 +26,21 @@
   var blockData = {height:window.innerHeight/30,width:window.innerWidth/15};
   balls = [];
   powerups = [];
+  var celebrated= false;
 
   if(window.innerHeight > window.innerWidth){
     paddle.yPaddlePos -= (window.innerHeight/30)*4;
+    paddle.width *= 1.5
+    blockData.width = window.innerWidth/8;
   }
 
   class ball{
     constructor(xPos,yPos){
-      this.xPos = xPos;this.xVel = 0;this.yVel=0;this.moving = false;this.radius = window.innerWidth*window.innerHeight/100000;
+      console.log(window.innerWidth*window.innerHeight);
+      this.xPos = xPos;this.xVel = 0;this.yVel=0;this.moving = false;this.radius = 7;
+      console.log(this.radius);
       this.yPos = yPos-this.radius;
-      this.xVelMax = 6*(1800/window.innerWidth); this.yVelMax = 10*(800/window.innerHeight);
+      this.xVelMax = 6; this.yVelMax = 9;
     }
     drawBall(mouseX){
       ctx.fillStyle = "silver";
@@ -59,7 +64,7 @@
     updateBall(blocks,yPaddlePos){
       for (var k = 0; k<blocks.length; k++){
         if(blocks[k].checkCollision(this.radius,this.xPos+this.xVel,this.yPos+this.yVel)){
-          this.yVel = -this.yVel;
+          //this.yVel = -this.yVel;
           blocks[k].destroy();
           blocks.splice(k, 1);
           break;
@@ -235,7 +240,14 @@
       gameSetup();
       gameRender();
     }
-  }
+    if(blocks.length == 0 && !celebrated){
+      celebrated = true;
+      for(var i =0;i<50;i++){
+        balls.push(new ball(Math.random()*window.innerWidth,Math.random()*window.innerHeight));
+      }
+      click();
+      }
+    }
 
   function gameRender(){
     ctx.fillStyle = "black";
