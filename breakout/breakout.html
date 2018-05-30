@@ -20,12 +20,16 @@
   var mouseX = window.innerWidth/2
   var framesPerSecond = 60;
   var score = 0;
-  var paddle = {width:window.innerWidth/8,height:window.innerHeight/50,widthMax:window.innerWidth/4};
+  var paddle = {xPos:window.innerHeight/30,width:window.innerWidthwidth:window.innerWidth/8,height:window.innerHeight/50,widthMax:window.innerWidth/4};
   var colors = ["#2e4053","#7d3c98","#ba4a00","#d4ac0d","#17a589","#2e86c1"];
   var blocks = [];
   var blockData = {height:window.innerHeight/30,width:window.innerWidth/15};
   balls = [];
   powerups = [];
+
+  if(:window.innerHeight>window.innerWidth){
+    paddle.xPos -= paddle.xPos*2;
+  }
 
   class ball{
     constructor(xPos,yPos){
@@ -237,7 +241,7 @@
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = "white";
-    ctx.fillRect(mouseX-paddle.width/2,window.innerHeight-window.innerHeight/15,paddle.width,paddle.height);
+    ctx.fillRect(mouseX-paddle.width/2,paddle.xPos,paddle.width,paddle.height);
     for(var i = 0;i < blocks.length; i++){
       blocks[i].drawBlock();
     }
