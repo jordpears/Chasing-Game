@@ -16,7 +16,7 @@
 <canvas id="gameCanvas" width=window.innerWidth height=window.innerHeight></canvas>
 
 <script>
-  alert("build: 1");
+  alert("            Breakout\nred powerup = length\ngold powerup = extra ball\nClick/Tap to deploy balls");
   var mouseX = window.innerWidth/2
   var framesPerSecond = 60;
   var score = 0;
@@ -36,9 +36,7 @@
 
   class ball{
     constructor(xPos,yPos){
-      console.log(window.innerWidth*window.innerHeight);
       this.xPos = xPos;this.xVel = 0;this.yVel=0;this.moving = false;this.radius = 7;
-      console.log(this.radius);
       this.yPos = yPos-this.radius;
       this.xVelMax = 6; this.yVelMax = 9;
     }
@@ -64,7 +62,7 @@
     updateBall(blocks,yPaddlePos){
       for (var k = 0; k<blocks.length; k++){
         if(blocks[k].checkCollision(this.radius,this.xPos+this.xVel,this.yPos+this.yVel)){
-          //this.yVel = -this.yVel;
+          this.yVel = -this.yVel;
           blocks[k].destroy();
           blocks.splice(k, 1);
           break;
