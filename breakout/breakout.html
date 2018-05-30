@@ -13,20 +13,7 @@
 
 <canvas id="gameCanvas" width=window.innerWidth height=window.innerHeight></canvas>
 
-<script src="touch-emulator.js"></script>
-<script> TouchEmulator(); </script>
-
-
 <script>
-
-function log(ev) {
-console.log(ev);
-}
-
-document.body.addEventListener('touchstart', log, false);
-document.body.addEventListener('touchmove', log, false);
-document.body.addEventListener('touchend', log, false);
-
 
   var mouseX = window.innerWidth/2
   var framesPerSecond = 60;
@@ -177,7 +164,7 @@ document.body.addEventListener('touchend', log, false);
     ctx.canvas.height = window.innerHeight;
     gameSetup();
     gameRender();
-    //canvas.addEventListener("mousemove",function(evt){calculateMousePos(evt)});
+    canvas.addEventListener("mousemove",function(evt){calculateMousePos(evt)});
     canvas.addEventListener("touchmove",function(evt){calculateMousePosFromTouch(evt)});
     canvas.addEventListener("click",function(){click();});
     setInterval(update, 1000/framesPerSecond);
