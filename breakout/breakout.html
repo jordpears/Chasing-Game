@@ -3,7 +3,7 @@
 <head><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /></head>
 <style>
   body {
-    background-color: white;
+    background-color: black;
     margin: 0;
     padding: 0;
     border: 0;
@@ -19,14 +19,15 @@
   alert("            Breakout\nred powerup = length\ngold powerup = extra ball\nClick/Tap to deploy balls");
   var mouseX = window.innerWidth/2
   var framesPerSecond = 60;
-  var score = 0;
   var paddle = {yPaddlePos:window.innerHeight-window.innerHeight/30,width:window.innerWidth/8,height:window.innerHeight/50,widthMax:window.innerWidth/4};
   var colors = ["#2e4053","#7d3c98","#ba4a00","#d4ac0d","#17a589","#2e86c1"];
   var blocks = [];
   var blockData = {height:window.innerHeight/30,width:window.innerWidth/15};
   balls = [];
   powerups = [];
+  deaths = 0;
   var celebrated= false;
+
 
   if(window.innerHeight > window.innerWidth){
     paddle.yPaddlePos -= (window.innerHeight/30)*4;
@@ -38,7 +39,7 @@
     constructor(xPos,yPos){
       this.xPos = xPos;this.xVel = 0;this.yVel=0;this.moving = false;this.radius = 7;
       this.yPos = yPos-this.radius;
-      this.xVelMax = 6; this.yVelMax = 9;
+      this.xVelMax = 6-deaths; this.yVelMax = 9-deaths;
     }
     drawBall(mouseX){
       ctx.fillStyle = "silver";
@@ -237,6 +238,9 @@
       powerups = [];
       gameSetup();
       gameRender();
+      if(deaths <= 4){
+        deaths += 1;
+      }
     }
     if(blocks.length == 0 && !celebrated){
       celebrated = true;
