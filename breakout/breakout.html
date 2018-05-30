@@ -20,7 +20,7 @@
   var mouseX = window.innerWidth/2
   var framesPerSecond = 60;
   var score = 0;
-  var paddle = {xPaddlePos:window.innerHeight-window.innerHeight/30,width:window.innerWidth/8,height:window.innerHeight/50,widthMax:window.innerWidth/4};
+  var paddle = {yPaddlePos:window.innerHeight-window.innerHeight/30,width:window.innerWidth/8,height:window.innerHeight/50,widthMax:window.innerWidth/4};
   var colors = ["#2e4053","#7d3c98","#ba4a00","#d4ac0d","#17a589","#2e86c1"];
   var blocks = [];
   var blockData = {height:window.innerHeight/30,width:window.innerWidth/15};
@@ -28,7 +28,7 @@
   powerups = [];
 
   if(window.innerHeight > window.innerWidth){
-    paddle.xPaddlePos -= paddle.xPaddlePos*2;
+    paddle.yPaddlePos -= (window.innerHeight/30)*4;
   }
 
   class ball{
@@ -56,7 +56,7 @@
         this.yVel = -window.innerHeight/70;
       }
     }
-    updateBall(blocks,xPaddlePos){
+    updateBall(blocks,yPaddlePos){
       for (var k = 0; k<blocks.length; k++){
         if(blocks[k].checkCollision(this.radius,this.xPos+this.xVel,this.yPos+this.yVel)){
           this.yVel = -this.yVel;
@@ -65,8 +65,8 @@
           break;
         }
       }
-      if(this.yPos > xPaddlePos - 10 && this.moving){
-        if(this.yPos+this.yVel >= xPaddlePos && this.yPos+this.yVel <= xPaddlePos+2*(window.innerHeight/80) && this.xPos <= mouseX+paddle.width/2 && this.xPos >= mouseX-paddle.width/2){
+      if(this.yPos > yPaddlePos - 10 && this.moving){
+        if(this.yPos+this.yVel >= yPaddlePos && this.yPos+this.yVel <= yPaddlePos+2*(window.innerHeight/80) && this.xPos <= mouseX+paddle.width/2 && this.xPos >= mouseX-paddle.width/2){
           var strength = Math.ceil(Math.abs(mouseX-this.xPos)/(window.innerWidth/100));
           this.yVel = -this.yVel*strength;
           this.xVel = this.xVel*strength*Math.random()-0.5;
@@ -108,9 +108,9 @@
       this.xPos = xPos;this.yPos = yPos;this.yVel = window.innerHeight/240;this.radius = window.innerWidth/100;
       this.type = type;
     }
-    checkCollision(mouseX,xPaddlePos){
-      if(this.yPos > xPaddlePos - 10){
-        if(this.yPos+this.yVel >= xPaddlePos && this.yPos+this.yVel <= xPaddlePos+2*(window.innerHeight/80) && this.xPos <= mouseX+paddle.width/2 && this.xPos >= mouseX-paddle.width/2){
+    checkCollision(mouseX,yPaddlePos){
+      if(this.yPos > yPaddlePos - 10){
+        if(this.yPos+this.yVel >= yPaddlePos && this.yPos+this.yVel <= yPaddlePos+2*(window.innerHeight/80) && this.xPos <= mouseX+paddle.width/2 && this.xPos >= mouseX-paddle.width/2){
           return [true,this.type];
         }
       }
@@ -204,23 +204,23 @@
         blocks.push(new block(i*blockData.width,window.innerHeight/20+j*blockData.height,currentColor,blockData.width,blockData.height));
       }
     }
-    balls.push(new ball(mouseX-paddle.width/2,paddle.xPaddlePos))
+    balls.push(new ball(mouseX-paddle.width/2,paddle.yPaddlePos))
   }
 
   function update(){
     for(var v =0;v<balls.length;v++){
-      balls[v].updateBall(blocks,paddle.xPaddlePos);
+      balls[v].updateBall(blocks,paddle.yPaddlePos);
       if(balls[v].getYPos() > window.innerHeight){
         balls.splice(v,1);
       }
     }
     for(var v = 0;v<powerups.length;v++){
       powerups[v].updatePowerupItem();
-      if(powerups[v].checkCollision(mouseX,paddle.xPaddlePos)[0]){
-        if(powerups[v].checkCollision(mouseX,paddle.xPaddlePos)[1] == "bonusball"){
-          balls.push(new ball(mouseX-paddle.width/2,paddle.xPaddlePos));
+      if(powerups[v].checkCollision(mouseX,paddle.yPaddlePos)[0]){
+        if(powerups[v].checkCollision(mouseX,paddle.yPaddlePos)[1] == "bonusball"){
+          balls.push(new ball(mouseX-paddle.width/2,paddle.yPaddlePos));
         }
-        if(powerups[v].checkCollision(mouseX,paddle.xPaddlePos)[1] == "long"){
+        if(powerups[v].checkCollision(mouseX,paddle.yPaddlePos)[1] == "long"){
           if(paddle.width < paddle.widthMax){
             paddle.width *= 1.07;
           }
@@ -241,7 +241,7 @@
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = "white";
-    ctx.fillRect(mouseX-paddle.width/2,paddle.xPaddlePos,paddle.width,paddle.height);
+    ctx.fillRect(mouseX-paddle.width/2,paddle.yPaddlePos,paddle.width,paddle.height);
     for(var i = 0;i < blocks.length; i++){
       blocks[i].drawBlock();
     }
