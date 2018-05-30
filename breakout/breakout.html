@@ -29,7 +29,7 @@
 
   class ball{
     constructor(xPos,yPos){
-      this.xPos = xPos;this.xVel = 0;this.yVel=0;this.moving = false;this.radius = window.innerWidth/150;
+      this.xPos = xPos;this.xVel = 0;this.yVel=0;this.moving = false;this.radius = window.innerWidth*window.innerHeight/100000;
       this.yPos = yPos-this.radius;
       this.xVelMax = 6*(1800/window.innerWidth); this.yVelMax = 10*(800/window.innerHeight);
     }
@@ -65,7 +65,7 @@
         if(this.yPos+this.yVel >= window.innerHeight-window.innerHeight/15 && this.yPos+this.yVel <= window.innerHeight-window.innerHeight/15+2*(window.innerHeight/80) && this.xPos <= mouseX+paddle.width/2 && this.xPos >= mouseX-paddle.width/2){
           var strength = Math.ceil(Math.abs(mouseX-this.xPos)/(window.innerWidth/100));
           this.yVel = -this.yVel*strength;
-          this.xVel = this.xVel*strength;
+          this.xVel = this.xVel*strength*Math.random()-0.5;
         }
       }
       if(this.xPos < 100){
