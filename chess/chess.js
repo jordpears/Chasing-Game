@@ -163,7 +163,6 @@ function Chessboard(){
     }
 
     //check for collision
-    for
 
     if(!abort) {
       this.gameState[moveTo] = this.gameState[this.pieceClicked];
