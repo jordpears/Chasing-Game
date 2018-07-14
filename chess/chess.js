@@ -112,7 +112,7 @@ function Chessboard(){
     console.log(pieceToMove.slice(pieceToMove.length-1,pieceToMove.length));
 
     //piece verification
-    if(pieceToMove.slice(pieceToMove.length-1,pieceToMove.length) == pieceAtMoveTo.slice(pieceAtMoveTo.length-1,pieceAtMoveTo.length)){
+    if(pieceToMove.slice(pieceToMove.length-1,pieceToMove.length) == pieceAtMoveTo.slice(pieceAtMoveTo.length-1,pieceAtMoveTo.length)){ //if moving to spot with same color piece.
       abort = true;
     }
     switch(pieceToMove.slice(0, -1)){
@@ -167,7 +167,13 @@ function Chessboard(){
     }
 
     //check for collision
-    this.determinePiecePath(pieceToMove.slice(0, -1),xPos,yPos,xPosOld,yPosOld);
+    var piecePath = this.determinePiecePath(pieceToMove.slice(0, -1),xPos,yPos,xPosOld,yPosOld);
+    for(var i = 0;i<piecePath.length;i++){
+      if(this.gameState[this.getBoardArrayPos(piecePath[i])] != ""){
+        abort = true;
+      }
+    }
+
 
     if(!abort) {
       this.gameState[moveTo] = this.gameState[this.pieceClicked];
@@ -190,30 +196,87 @@ function Chessboard(){
         }
         break;
       case "c":
-        for(var i = yPosOld-1;i>yPos;i--){
+        for(var i = yPosOld-1;i>yPos;i--){ //up
           positionsPassed.push([xPos,i]);
         }
-        for(var i = yPosOld+1;i<yPos;i++){
+        for(var i = yPosOld+1;i<yPos;i++){ //down
           positionsPassed.push([xPos,i]);
         }
-        for(var i = xPosOld-1;i>xPos;i--){
+        for(var i = xPosOld-1;i>xPos;i--){ //left
           positionsPassed.push([i,yPos]);
         }
-        for(var i = xPosOld+1;i<xPos;i++){
+        for(var i = xPosOld+1;i<xPos;i++){ //right
           positionsPassed.push([i,yPos]);
         }
         break;
       case "b":
-
+      var loops = 0;
+      if(xPos > xPosOld){ //going right
+        for(var i = yPosOld-1;i>yPos;i--){ //up & right
+          loops -= 1;
+          positionsPassed.push([xPosOld-loops,i]);
+        }
+        for(var i = yPosOld+1;i<yPos;i++){ //down & right
+          loops -= 1;
+          positionsPassed.push([xPosOld-loops,i]);
+        }
+      }
+      else{ //going left
+        for(var i = yPosOld-1;i>yPos;i--){ //up & left
+          loops += 1;
+          positionsPassed.push([xPosOld-loops,i]);
+        }
+        for(var i = yPosOld+1;i<yPos;i++){ //down & left
+          loops += 1;
+          positionsPassed.push([xPosOld-loops,i]);
+        }
+      }
+      break;
       case "q":
-
+      if(yPosOld == yPos || xPosOld == xPos){ //castle style movement
+        for(var i = yPosOld-1;i>yPos;i--){ //up
+          positionsPassed.push([xPos,i]);
+        }
+        for(var i = yPosOld+1;i<yPos;i++){ //down
+          positionsPassed.push([xPos,i]);
+        }
+        for(var i = xPosOld-1;i>xPos;i--){ //left
+          positionsPassed.push([i,yPos]);
+        }
+        for(var i = xPosOld+1;i<xPos;i++){ //right
+          positionsPassed.push([i,yPos]);
+        }
+      }
+      else{ //bishop style movement
+        var loops = 0;
+        if(xPos > xPosOld){ //going right
+          for(var i = yPosOld-1;i>yPos;i--){ //up & right
+            loops -= 1;
+            positionsPassed.push([xPosOld-loops,i]);
+          }
+          for(var i = yPosOld+1;i<yPos;i++){ //down & right
+            loops -= 1;
+            positionsPassed.push([xPosOld-loops,i]);
+          }
+        }
+        else{ //going left
+          for(var i = yPosOld-1;i>yPos;i--){ //up & left
+            loops += 1;
+            positionsPassed.push([xPosOld-loops,i]);
+          }
+          for(var i = yPosOld+1;i<yPos;i++){ //down & left
+            loops += 1;
+            positionsPassed.push([xPosOld-loops,i]);
+          }
+        }
+      }
+      break;
     }
-    console.log(positionsPassed);
     return positionsPassed;
   }
 
-  this.getBoardArrayPos = function(xPos,yPos){
-    return yPos*8+xPos;
+  this.getBoardArrayPos = function(xyPosition){
+    return xyPosition[1]*8+xyPosition[0];
   }
 
   //"contructor"
