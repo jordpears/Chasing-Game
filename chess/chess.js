@@ -109,8 +109,12 @@ function Chessboard(){
     var pieceToMove = this.gameState[this.pieceClicked];
     distanceMovedX = xPosOld - xPos;
     distanceMovedY = yPosOld - yPos;
-    console.log(pieceToMove.slice(0,-1));
+    console.log(pieceToMove.slice(pieceToMove.length-1,pieceToMove.length));
+
     //piece verification
+    if(pieceToMove.slice(pieceToMove.length-1,pieceToMove.length) == pieceAtMoveTo.slice(pieceAtMoveTo.length-1,pieceAtMoveTo.length)){
+      abort = true;
+    }
     switch(pieceToMove.slice(0, -1)){
 
       case "p1":
@@ -163,6 +167,7 @@ function Chessboard(){
     }
 
     //check for collision
+    this.determinePiecePath(pieceToMove.slice(0, -1),xPos,yPos,xPosOld,yPosOld);
 
     if(!abort) {
       this.gameState[moveTo] = this.gameState[this.pieceClicked];
@@ -174,6 +179,41 @@ function Chessboard(){
       this.pieceClicked = -1;
       this.drawState();
     }
+  }
+
+  this.determinePiecePath = function(piece,xPos,yPos,xPosOld,yPosOld){ //determine all positions a piece will pass to get to its final position. --excluding knights due to jump and kings due to 1step.
+    var positionsPassed = [];
+    switch(piece){
+      case "p1":
+        for(var i = yPosOld-1;i>yPos;i--){
+          positionsPassed.push([xPos,i]);
+        }
+        break;
+      case "c":
+        for(var i = yPosOld-1;i>yPos;i--){
+          positionsPassed.push([xPos,i]);
+        }
+        for(var i = yPosOld+1;i<yPos;i++){
+          positionsPassed.push([xPos,i]);
+        }
+        for(var i = xPosOld-1;i>xPos;i--){
+          positionsPassed.push([i,yPos]);
+        }
+        for(var i = xPosOld+1;i<xPos;i++){
+          positionsPassed.push([i,yPos]);
+        }
+        break;
+      case "b":
+
+      case "q":
+
+    }
+    console.log(positionsPassed);
+    return positionsPassed;
+  }
+
+  this.getBoardArrayPos = function(xPos,yPos){
+    return yPos*8+xPos;
   }
 
   //"contructor"
