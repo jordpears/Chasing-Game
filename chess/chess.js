@@ -6,14 +6,22 @@ darkboard = document.getElementById('darkboard'); //background squares
 lightboard = document.getElementById('lightboard');
 
 function Chessboard(){
-  this.gameState = ["cb","hb","bb","qb","kb","bb","hb","cb",
+  this.gameState =
+  ["cb","hb","bb","qb","kb","bb","hb","cb",
                   "p1b","p1b","p1b","p1b","p1b","p1b","p1b","p1b",
                   "","","","","","","","",
                   "","","","","","","","",
                   "","","","","","","","",
                   "","","","","","","","",
                   "p1w","p1w","p1w","p1w","p1w","p1w","p1w","p1w",
-                  "cw","hw","bw","qw","kw","bw","hw","cw"];
+                  "cw","hw","bw","qw","kw","bw","hw","cw"];/*["cb","hb","bb","qb","kb","bb","hb","cb",
+                  "p1b","p1b","p1b","p1b","p1b","p1b","p1b","p1b",
+                  "","","","","","","","",
+                  "","","","","","","","",
+                  "","","","","","","","",
+                  "","","","","","","","",
+                  "p1w","p1w","p1w","p1w","p1w","p1w","p1w","p1w",
+                  "cw","hw","bw","qw","kw","bw","hw","cw"];*/
   this.boardPositions = [];
   this.pieceClicked = -1; //no piece clicked
   this.inCheck = false;
@@ -115,7 +123,9 @@ function Chessboard(){
 
     //piece verification
     if(pieceToMove.slice(pieceToMove.length-1,pieceToMove.length) == pieceAtMoveTo.slice(pieceAtMoveTo.length-1,pieceAtMoveTo.length)) { //if moving to spot with same color piece.
-      if(!this.kingMoved && pieceAtMoveTo.slice(0, -1) == "c" && pieceToMove.slice(0,-1) == "k" && this.gameState[this.pieceClicked+1] == "" && this.gameState[this.pieceClicked+2] == "" && !this.checkChecker() && !this.inCheck) { //im castling!
+      if(!this.kingMoved && pieceAtMoveTo.slice(0, -1) == "c" && pieceToMove.slice(0,-1) == "k" &&
+      ((this.gameState[this.pieceClicked-1] == "" && this.gameState[this.pieceClicked-2] == "" && this.gameState[this.pieceClicked-3] == "") || (this.gameState[this.pieceClicked+1] == "" && this.gameState[this.pieceClicked+2] == ""))
+      && !this.checkChecker() && !this.inCheck) { //im castling!
         var failed = false;
         castling = true;
         if(moveTo>this.pieceClicked){ //castle right
@@ -146,6 +156,7 @@ function Chessboard(){
           }
         }
         else{
+          console.log("left");
           this.gameState[this.pieceClicked-1] = this.gameState[this.pieceClicked];
           this.gameState[this.pieceClicked] = "";
           if(this.checkChecker()){
@@ -329,7 +340,7 @@ function Chessboard(){
             }
             break;
         }
-        if(probe[0] >= 1 && probe[0] < 7 && probe[1] >= 1 && probe[1] < 7){
+        if(probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
           if(!(this.gameState[this.getBoardArrayPos(probe)] == "" || this.gameState[this.getBoardArrayPos(probe)].slice(0,1) == "k")){
             collided = true;
           }
@@ -341,12 +352,12 @@ function Chessboard(){
     }
     //check for pawn threat
     probe = this.getXYfromArrayPos(this.gameState.indexOf("k"+this.color));
-    if(this.gameState[this.getBoardArrayPosOffset(probe,-1,-1)] == "p"+this.enemyColor ||
-    this.gameState[this.getBoardArrayPosOffset(probe,-1,+1)] == "p"+this.enemyColor ||
-    this.gameState[this.getBoardArrayPosOffset(probe,-1,-1)] == "p1"+this.enemyColor ||
-    this.gameState[this.getBoardArrayPosOffset(probe,-1,+1)] == "p1"+this.enemyColor){
+    if(this.gameState[this.getBoardArrayPosOffset(probe,+1,-1)] == "p"+this.enemyColor ||
+    this.gameState[this.getBoardArrayPosOffset(probe,-1,-1)] == "p"+this.enemyColor ||
+    this.gameState[this.getBoardArrayPosOffset(probe,+1,-1)] == "p1"+this.enemyColor ||
+    this.gameState[this.getBoardArrayPosOffset(probe,-1,-1)] == "p1"+this.enemyColor){
       checked = true;
-      console.log("pawn");
+      console.log("Check from " + "pawn");
     }
     //check for knight threat
     if(this.gameState[this.getBoardArrayPosOffset(probe,-1,-2)] == "h"+this.enemyColor ||
@@ -358,7 +369,7 @@ function Chessboard(){
     this.gameState[this.getBoardArrayPosOffset(probe,+2,-1)] == "h"+this.enemyColor ||
     this.gameState[this.getBoardArrayPosOffset(probe,+2,+1)] == "h"+this.enemyColor){
       checked = true;
-      console.log("knight");
+      console.log("Check from " + "knight");
     }
     return checked;
   }
@@ -462,7 +473,7 @@ function Chessboard(){
     if(xyPosition[1]+yOffset < 0 || xyPosition[1]+yOffset > 7){
         yOffset = 0;
     }
-    return (xyPosition[1]-yOffset)*8+(xyPosition[0]+xOffset);
+    return (xyPosition[1]+yOffset)*8+(xyPosition[0]+xOffset);
   }//get array pos but can deal with offsets.
 
   this.getXYfromArrayPos = function(ArrayPos){
