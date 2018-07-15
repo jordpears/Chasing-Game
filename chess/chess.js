@@ -128,7 +128,7 @@ function Chessboard(){
       && !this.checkChecker() && !this.inCheck) { //im castling!
         var failed = false;
         castling = true;
-        if(moveTo>this.pieceClicked){ //castle right
+        if(moveTo > this.pieceClicked && (this.gameState[this.pieceClicked+1] == "" && this.gameState[this.pieceClicked+2] == "")){ //castle right
           //check not passing check.
           this.gameState[this.pieceClicked+1] = this.gameState[this.pieceClicked];
           this.gameState[this.pieceClicked] = "";
@@ -155,8 +155,7 @@ function Chessboard(){
             castling = false;
           }
         }
-        else{
-          console.log("left");
+        else if(moveTo < this.pieceClicked && (this.gameState[this.pieceClicked-1] == "" && this.gameState[this.pieceClicked-2] == "" && this.gameState[this.pieceClicked-3] == "")){//castle left
           this.gameState[this.pieceClicked-1] = this.gameState[this.pieceClicked];
           this.gameState[this.pieceClicked] = "";
           if(this.checkChecker()){
@@ -182,9 +181,12 @@ function Chessboard(){
             castling = false;
           }
         }
+        else {
+          abort = true;
+          castling = false;
+        }
       }
-      else
-      {
+      else {
         abort = true;
       }
     }
@@ -526,7 +528,6 @@ getGameStateTemp = function() {
 }
 updateGameStateTemp = function() {
   board.gameState = eval(document.getElementById("gameStateEditor").value);
-  console.log(board.gameState);
   board.drawState();
 }
 
