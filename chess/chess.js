@@ -510,6 +510,16 @@ window.onload = function() {
   board.drawState();
 }
 
+getGameStateTemp = function() {
+  document.getElementById("gameStateEditor").value = JSON.stringify(board.gameState);
+}
+updateGameStateTemp = function() {
+  board.gameState = eval(document.getElementById("gameStateEditor").value);
+  console.log(board.gameState);
+  board.drawState();
+}
+
+
 function onClick(event){
   var rect = canvas.getBoundingClientRect();
   var root = document.documentElement;

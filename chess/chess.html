@@ -15,6 +15,7 @@
 }
 </style>
 
+
  <div style="display:none;">
   <img id="darkboard" src="img/darkboard.png">
   <img id="lightboard" src="img/lightboard.png">
@@ -37,6 +38,15 @@
  </div>
  <canvas id="gameCanvas"></canvas>
  <script src="chess.js"></script>
+
+ <textarea rows="10" cols="50" id="gameStateEditor">
+</textarea>
+<button type="button" onclick=getGameStateTemp()>Get Game State</button>
+<button type="button" onclick=updateGameStateTemp()>Update Game State</button>
+
+
+
+
 
 
 </html>
