@@ -8,12 +8,12 @@ lightboard = document.getElementById('lightboard');
 function Chessboard(){
   this.gameState =
   ["cb","hb","bb","qb","kb","bb","hb","cb",
-                  "p1b","p1b","p1b","p1b","p1b","p1b","p1b","p1b",
-                  "","","","","","","","",
-                  "","","","","","","","",
-                  "","","","","","","","",
-                  "","","","","","","","",
-                  "p1w","p1w","p1w","p1w","p1w","p1w","p1w","p1w",
+                  "p1b","p1b","p1b","p1b","p1b","p1b","bb","",
+                  "","","","","","","bb","enp",
+                  "","","","","","","pw","pb",
+                  "pw","pb","","","","","","",
+                  "enp","","","cb","","","","",
+                  "","p1w","p1w","p1w","p1w","p1w","p1w","p1w",
                   "cw","hw","bw","qw","kw","bw","hw","cw"];/*["cb","hb","bb","qb","kb","bb","hb","cb",
                   "p1b","p1b","p1b","p1b","p1b","p1b","p1b","p1b",
                   "","","","","","","","",
@@ -28,6 +28,7 @@ function Chessboard(){
   this.color = "w";
   this.enemyColor = "";
   this.kingMoved = false;
+  this.pickingPiece = -1;
 
   this.setupBoardPositions = function() {
     var across = 0;
@@ -67,7 +68,7 @@ function Chessboard(){
     var across = 0;
     var alternate = true;
     for(i = 0;i<8*8;i++){
-      if(this.gameState[i] != ""){
+      if(this.gameState[i] != "" && this.gameState[i] != "enp"){
         ctx.drawImage(document.getElementById(this.gameState[i]),pieceSize*across,pieceSize*Math.floor(i/8),pieceSize,pieceSize);
       }
       across += 1;
@@ -113,6 +114,23 @@ function Chessboard(){
     }
   }
 
+  this.checkCheckerForChanges = function(ArrayLocationProbed,ArrayLocationOriginal){
+    xPos = this.getXYfromArrayPos(ArrayLocationProbed)[0];
+    yPos = this.getXYfromArrayPos(ArrayLocationProbed)[1];
+    xPosOld = this.getXYfromArrayPos(ArrayLocationOriginal)[0];
+    yPosOld = this.getXYfromArrayPos(ArrayLocationOriginal)[1];
+    var putIntoCheck = false;
+    var temporaryPiece = this.gameState[this.getBoardArrayPos([xPosOld,yPosOld])];
+    this.gameState[this.getBoardArrayPos([xPos,yPos])] = this.gameState[this.getBoardArrayPos([xPosOld,yPosOld])];
+    this.gameState[this.getBoardArrayPos([xPosOld,yPosOld])] = "";
+    if(this.checkChecker()){
+      putIntoCheck = true;
+    }
+    this.gameState[this.getBoardArrayPos([xPosOld,yPosOld])] = temporaryPiece;
+    this.gameState[this.getBoardArrayPos([xPos,yPos])] = "";
+    return putIntoCheck;
+  }
+
   this.movePiece = function(moveTo,xPos,yPos,xPosOld,yPosOld){ //verify move
     var abort = false;
     var pieceAtMoveTo = this.gameState[moveTo];
@@ -121,67 +139,74 @@ function Chessboard(){
     distanceMovedX = xPosOld - xPos;
     distanceMovedY = yPosOld - yPos;
 
+    //enpassant
+    if(pieceAtMoveTo == "enp" && (pieceToMove.slice(0,-1) == "p" || pieceToMove.slice(0,-1) == "p1")){ //if enPassant at location kill the pawn below it.
+      console.log("enpass found");
+      this.gameState[this.getBoardArrayPosOffset([xPos,yPos],0,1)] = "";
+    }
+    if(this.gameState.indexOf("enp") != -1){ //remove any enPassant missed opportunities.
+      this.gameState[this.gameState.indexOf("enp")] = "";
+    }
+
+    //cannot take a king
+    if(pieceAtMoveTo.slice(0,-1) == "k"){
+      abort = true;
+    }
+
     //piece verification
-    if(pieceToMove.slice(pieceToMove.length-1,pieceToMove.length) == pieceAtMoveTo.slice(pieceAtMoveTo.length-1,pieceAtMoveTo.length)) { //if moving to spot with same color piece.
-      if(!this.kingMoved && pieceAtMoveTo.slice(0, -1) == "c" && pieceToMove.slice(0,-1) == "k" &&
-      ((this.gameState[this.pieceClicked-1] == "" && this.gameState[this.pieceClicked-2] == "" && this.gameState[this.pieceClicked-3] == "") || (this.gameState[this.pieceClicked+1] == "" && this.gameState[this.pieceClicked+2] == ""))
-      && !this.checkChecker() && !this.inCheck) { //im castling!
+    if(pieceToMove.slice(pieceToMove.length-1,pieceToMove.length) == pieceAtMoveTo.slice(pieceAtMoveTo.length-1,pieceAtMoveTo.length)) { //if moving to spot with same color piece/attempting to castle
+      if(!this.kingMoved && pieceAtMoveTo.slice(0, -1) == "c" && pieceToMove.slice(0,-1) == "k" && !this.checkChecker() && !this.inCheck) { //im castling!
+        console.log("atmp")
         var failed = false;
         castling = true;
-        if(moveTo > this.pieceClicked && (this.gameState[this.pieceClicked+1] == "" && this.gameState[this.pieceClicked+2] == "")){ //castle right
+        if(this.color == "w" && moveTo > this.pieceClicked &&  (this.gameState[this.pieceClicked+1] == "" && this.gameState[this.pieceClicked+2] == "")){ //castle left and white
           //check not passing check.
-          this.gameState[this.pieceClicked+1] = this.gameState[this.pieceClicked];
-          this.gameState[this.pieceClicked] = "";
-          if(this.checkChecker()){
+          if(this.checkCheckerForChanges(this.pieceClicked+1,this.pieceClicked) || this.checkCheckerForChanges(this.pieceClicked+2,this.pieceClicked)){
             failed = true;
           }
-          this.gameState[this.pieceClicked] = pieceToMove;
-          this.gameState[this.pieceClicked+1] = "";
-          //check not putting into check
-          this.gameState[this.pieceClicked+2] = this.gameState[this.pieceClicked];
-          this.gameState[this.pieceClicked] = "";
-          if(this.checkChecker()){
-            failed = true;
-          }
-          this.gameState[this.pieceClicked] = pieceToMove;
-          this.gameState[this.pieceClicked+2] = "";
           if(!failed){
             this.gameState[63] = "";
             this.gameState[61] = "c"+this.color;
             moveTo -= 1;
           }
-          else{
-            abort = true;
-            castling = false;
-          }
         }
-        else if(moveTo < this.pieceClicked && (this.gameState[this.pieceClicked-1] == "" && this.gameState[this.pieceClicked-2] == "" && this.gameState[this.pieceClicked-3] == "")){//castle left
-          this.gameState[this.pieceClicked-1] = this.gameState[this.pieceClicked];
-          this.gameState[this.pieceClicked] = "";
-          if(this.checkChecker()){
+        else if(this.color == "w" && moveTo < this.pieceClicked && (this.gameState[this.pieceClicked-1] == "" && this.gameState[this.pieceClicked-2] == "" && this.gameState[this.pieceClicked-3] == "")){//castle left and white
+          if(this.checkCheckerForChanges(this.pieceClicked-1,this.pieceClicked)||this.checkCheckerForChanges(this.pieceClicked-2,this.pieceClicked)){
             failed = true;
           }
-          this.gameState[this.pieceClicked] = pieceToMove;
-          this.gameState[this.pieceClicked-1] = "";
-          //check not putting into check
-          this.gameState[this.pieceClicked-2] = this.gameState[this.pieceClicked];
-          this.gameState[this.pieceClicked] = "";
-          if(this.checkChecker()){
-            failed = true;
-          }
-          this.gameState[this.pieceClicked] = pieceToMove;
-          this.gameState[this.pieceClicked-2] = "";
           if(!failed){
             this.gameState[56] = "";
             this.gameState[59] = "c"+this.color;
             moveTo += 2;
           }
-          else{
-            abort = true;
-            castling = false;
+        }
+        else if(this.color == "b" && moveTo < this.pieceClicked &&  (this.gameState[this.pieceClicked-1] == "" && this.gameState[this.pieceClicked-2] == "")){ //castle left and white
+          //check not passing check.
+          if(this.checkCheckerForChanges(this.pieceClicked-1,this.pieceClicked) || this.checkCheckerForChanges(this.pieceClicked-2,this.pieceClicked)){
+            failed = true;
+          }
+          if(!failed){
+            this.gameState[56] = "";
+            this.gameState[58] = "c"+this.color;
+            moveTo += 1;
+            console.log("hi")
+          }
+        }
+        else if(this.color == "b" && moveTo > this.pieceClicked && (this.gameState[this.pieceClicked+1] == "" && this.gameState[this.pieceClicked+2] == "" && this.gameState[this.pieceClicked+3] == "")){//castle left and white
+          if(this.checkCheckerForChanges(this.pieceClicked+1,this.pieceClicked)||this.checkCheckerForChanges(this.pieceClicked+2,this.pieceClicked)){
+            failed = true;
+          }
+          if(!failed){
+            this.gameState[63] = "";
+            this.gameState[60] = "c"+this.color;
+            moveTo -= 2;
           }
         }
         else {
+          abort = true;
+          castling = false;
+        }
+        if(failed){
           abort = true;
           castling = false;
         }
@@ -190,17 +215,17 @@ function Chessboard(){
         abort = true;
       }
     }
-    switch(pieceToMove.slice(0, -1)){
-
+    switch(pieceToMove.slice(0, -1)){ //handle motion of pieces
       case "p1":
-        if(pieceAtMoveTo != ""){
+        if(pieceAtMoveTo != "" && pieceAtMoveTo != "enp"){
           if(distanceMovedY <= 1 && distanceMovedY > 0 && Math.abs(distanceMovedX) == 1){
             pieceToMove = this.gameState[this.pieceClicked].slice(0,1) + this.gameState[this.pieceClicked].slice(2);
             break;
           }
         }
-        if(distanceMovedY <= 2 && distanceMovedY > 0 && distanceMovedX == 0){
+        if(distanceMovedY <= 2 && distanceMovedY > 0 && distanceMovedX == 0 && pieceAtMoveTo == ""){
           pieceToMove = this.gameState[this.pieceClicked].slice(0,1) + this.gameState[this.pieceClicked].slice(2);
+          this.gameState[this.getBoardArrayPos([xPos,yPos+1])] = "enp";
           break;
         }
         abort = true;
@@ -259,15 +284,42 @@ function Chessboard(){
     this.gameState[moveTo] = pieceAtMoveTo;
     this.gameState[this.pieceClicked] = pieceToMove;
 
+    //if move being successful
     if(!abort) {
       this.gameState[moveTo] = pieceToMove;
       this.gameState[this.pieceClicked] = "";
       this.pieceClicked = -1;
       this.drawState();
-    }
+      if(pieceToMove.slice(0,-1) == "p" && yPos == 0){
+        this.pickingPiece = moveTo;
+        this.pieceSwap();
+      }
+    } //if move failed
     else{
       this.pieceClicked = -1;
       this.drawState();
+    }
+  }
+
+  this.pieceSwap = function(){
+    ctx.drawImage(document.getElementById('pieceSelector'),0.123*ctx.canvas.width,0.348*ctx.canvas.height,0.764*ctx.canvas.width,0.319*ctx.canvas.height);
+    var toBeDrawn = ["q","b","h","c"];
+    for(var i = 0;i<4;i++){
+      ctx.drawImage(document.getElementById(toBeDrawn[i]+this.color),(203/1200)*ctx.canvas.width+(211/1200)*ctx.canvas.width*i,563/1200*ctx.canvas.height,160/1200*ctx.canvas.width,160/1200*ctx.canvas.height);
+    }
+  }
+
+  this.clickedPiecePicker = function(mouseX,mouseY){
+    var toBeDrawn = ["q","b","h","c"];
+    (203/1200)*ctx.canvas.width+(211/1200)*ctx.canvas.width*i
+    if(mouseY > 563/1200*ctx.canvas.height && mouseY < 290/474*ctx.canvas.height){
+      for(var i = 0;i<4;i++){
+        if(mouseX > (203/1200)*ctx.canvas.width+(211/1200)*ctx.canvas.width*i && mouseX < (203/1200)*ctx.canvas.width+(211/1200)*ctx.canvas.width*i + 160/1200*ctx.canvas.width){
+          this.gameState[this.pickingPiece] = toBeDrawn[i]+this.color;
+          this.pickingPiece = -1;
+          this.drawState();
+        }
+      }
     }
   }
 
@@ -523,20 +575,24 @@ window.onload = function() {
   board.drawState();
 }
 
+function onClick(event){
+  var rect = canvas.getBoundingClientRect();
+  var root = document.documentElement;
+  mouseX = event.clientX - rect.left - root.scrollLeft;
+  mouseY = event.clientY - rect.top - root.scrollTop ;
+  if(board.pickingPiece == -1){
+    board.clicked(mouseX,mouseY);
+  }
+  else{
+    board.clickedPiecePicker(mouseX,mouseY);
+  }
+}
+
+//debug stuff
 getGameStateTemp = function() {
   document.getElementById("gameStateEditor").value = JSON.stringify(board.gameState);
 }
 updateGameStateTemp = function() {
   board.gameState = eval(document.getElementById("gameStateEditor").value);
   board.drawState();
-}
-
-
-function onClick(event){
-  var rect = canvas.getBoundingClientRect();
-  var root = document.documentElement;
-  mouseX = event.clientX - rect.left - root.scrollLeft;
-  mouseY = event.clientY - rect.top - root.scrollTop ;
-  board.clicked(mouseX,mouseY);
-
 }
