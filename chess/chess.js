@@ -12,7 +12,7 @@ function Chessboard(){
                   "","","","","","","bb","enp",
                   "","","","","","","pw","pb",
                   "pw","pb","","","","","","",
-                  "enp","","","cb","","","","",
+                  "enp","","cb","cb","","","","",
                   "","p1w","p1w","p1w","p1w","p1w","p1w","p1w",
                   "cw","hw","bw","qw","kw","bw","hw","cw"];/*["cb","hb","bb","qb","kb","bb","hb","cb",
                   "p1b","p1b","p1b","p1b","p1b","p1b","p1b","p1b",
@@ -223,7 +223,7 @@ function Chessboard(){
             break;
           }
         }
-        if(distanceMovedY <= 2 && distanceMovedY > 0 && distanceMovedX == 0 && pieceAtMoveTo == ""){
+        if(distanceMovedY <= 2 && distanceMovedY > 0 && distanceMovedX == 0 && pieceAtMoveTo == "" && this.gameState[this.getBoardArrayPosOffset([xPosOld,yPosOld],0,-1)] == ""){
           pieceToMove = this.gameState[this.pieceClicked].slice(0,1) + this.gameState[this.pieceClicked].slice(2);
           this.gameState[this.getBoardArrayPos([xPos,yPos+1])] = "enp";
           break;
