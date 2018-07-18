@@ -438,6 +438,10 @@ function Chessboard(){
     return checked;
   }
 
+  this.lossChecker = function(){
+
+  }
+
   this.determinePiecePath = function(piece,xPos,yPos,xPosOld,yPosOld){ //determine all positions a piece will pass to get to its final position. --excluding knights due to jump and kings due to 1step.
     var positionsPassed = [];
     switch(piece){
