@@ -1,0 +1,6 @@
+if(incheck){
+	cycle every king move to see if it releases me;
+	if not{
+		cycle every other pieces move to see if it releases me;
+	}
+}

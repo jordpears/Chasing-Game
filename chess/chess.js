@@ -144,9 +144,6 @@ function Chessboard(){
       console.log("enpass found");
       this.gameState[this.getBoardArrayPosOffset([xPos,yPos],0,1)] = "";
     }
-    if(this.gameState.indexOf("enp") != -1){ //remove any enPassant missed opportunities.
-      this.gameState[this.gameState.indexOf("enp")] = "";
-    }
 
     //cannot take a king
     if(pieceAtMoveTo.slice(0,-1) == "k"){
@@ -289,6 +286,9 @@ function Chessboard(){
       this.gameState[moveTo] = pieceToMove;
       this.gameState[this.pieceClicked] = "";
       this.pieceClicked = -1;
+      if(this.gameState.indexOf("enp") != -1){ //remove any enPassant missed opportunities.
+        this.gameState[this.gameState.indexOf("enp")] = "";
+      }
       this.drawState();
       if(pieceToMove.slice(0,-1) == "p" && yPos == 0){
         this.pickingPiece = moveTo;
@@ -335,28 +335,29 @@ function Chessboard(){
         switch(directionToCheck){
           case "up":
             probe[1] -= 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor){
+            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
             break;
           case "down":
             probe[1] += 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor){
+            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
             break;
           case "left":
             probe[0] -= 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor){
+            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor && probe[0] >= 0 && probe[0] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
+              console.log(probe);
             }
             break;
           case "right":
             probe[0] += 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor){
+            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor && probe[0] >= 0 && probe[0] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
@@ -364,7 +365,7 @@ function Chessboard(){
           case "upleft":
             probe[0] -= 1;
             probe[1] -= 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor){
+            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
@@ -372,7 +373,7 @@ function Chessboard(){
           case "downleft":
             probe[0] -= 1;
             probe[1] += 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor){
+            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
@@ -380,7 +381,7 @@ function Chessboard(){
           case "upright":
             probe[0] += 1;
             probe[1] -= 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor){
+            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
@@ -388,14 +389,14 @@ function Chessboard(){
           case "downright":
             probe[0] += 1;
             probe[1] += 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor){
+            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
             break;
         }
         if(probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
-          if(!(this.gameState[this.getBoardArrayPos(probe)] == "" || this.gameState[this.getBoardArrayPos(probe)].slice(0,1) == "k")){
+          if(!(this.gameState[this.getBoardArrayPos(probe)] == "" || this.gameState[this.getBoardArrayPos(probe)] == "k"+this.color)){
             collided = true;
           }
         }
@@ -424,6 +425,15 @@ function Chessboard(){
     this.gameState[this.getBoardArrayPosOffset(probe,+2,+1)] == "h"+this.enemyColor){
       checked = true;
       console.log("Check from " + "knight");
+    }
+    //check for king threat
+    for(var i = -1;i<2;i+=1){
+      for(var j = -1;j<2;j+=1){
+        if(this.gameState[this.getBoardArrayPosOffset(probe,i,j)] == "k"+this.enemyColor){
+          checked = true;
+          console.log("Check from " + "king");
+        }
+      }
     }
     return checked;
   }
