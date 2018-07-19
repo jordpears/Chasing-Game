@@ -230,6 +230,9 @@ function Chessboard(){
         }
         if(distanceMovedY <= 2 && distanceMovedY > 0 && distanceMovedX == 0 && pieceAtMoveTo == "" && this.gameState[this.getBoardArrayPosOffset([xPosOld,yPosOld],0,-1)] == ""){
           pieceToMove = this.gameState[this.pieceClicked].slice(0,1) + this.gameState[this.pieceClicked].slice(2);
+          if(this.gameState.indexOf("enp") != -1){ //remove any enPassant missed opportunities.
+            this.gameState[this.gameState.indexOf("enp")] = "";
+          }
           this.gameState[this.getBoardArrayPos([xPos,yPos+1])] = "enp";
           enPassantEnabled = true;
           break;
