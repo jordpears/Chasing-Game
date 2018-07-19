@@ -145,6 +145,7 @@ function Chessboard(){
     var yPos = this.getXYfromArrayPos(moveTo)[1];
     var xPosOld = this.getXYfromArrayPos(moveFrom)[0];
     var yPosOld = this.getXYfromArrayPos(moveFrom)[1];
+    var enPassantEnabled = false;
     distanceMovedX = xPosOld - xPos;
     distanceMovedY = yPosOld - yPos;
 
@@ -230,6 +231,7 @@ function Chessboard(){
         if(distanceMovedY <= 2 && distanceMovedY > 0 && distanceMovedX == 0 && pieceAtMoveTo == "" && this.gameState[this.getBoardArrayPosOffset([xPosOld,yPosOld],0,-1)] == ""){
           pieceToMove = this.gameState[this.pieceClicked].slice(0,1) + this.gameState[this.pieceClicked].slice(2);
           this.gameState[this.getBoardArrayPos([xPos,yPos+1])] = "enp";
+          enPassantEnabled = true;
           break;
         }
         abort = true;
@@ -299,7 +301,7 @@ function Chessboard(){
     }
 
     if(!abort) {
-      this.pieceUpdate(moveTo,pieceToMove,yPos);
+      this.pieceUpdate(moveTo,pieceToMove,yPos,enPassantEnabled);
       var temp = this.enemyColor;
       this.enemyColor = this.color;
       this.color = temp;
@@ -313,12 +315,14 @@ function Chessboard(){
     }
   }
 
-  this.pieceUpdate = function(moveTo,pieceToMove,yPos){
+  this.pieceUpdate = function(moveTo,pieceToMove,yPos,enPassantEnabled){
     this.gameState[moveTo] = pieceToMove;
     this.gameState[this.pieceClicked] = "";
     this.pieceClicked = -1;
-    if(this.gameState.indexOf("enp") != -1){ //remove any enPassant missed opportunities.
-      this.gameState[this.gameState.indexOf("enp")] = "";
+    if(!enPassantEnabled){
+      if(this.gameState.indexOf("enp") != -1){ //remove any enPassant missed opportunities.
+        this.gameState[this.gameState.indexOf("enp")] = "";
+      }
     }
     this.drawState();
     if(pieceToMove.slice(0,-1) == "p" && yPos == 0){
