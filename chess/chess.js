@@ -8,13 +8,13 @@ lightboard = document.getElementById('lightboard');
 function Chessboard(){
   this.gameState =
   ["cb","hb","bb","qb","kb","bb","hb","cb",
-                  "p1b","p1b","p1b","p1b","p1b","p1b","bb","",
-                  "","","","","","","bb","enp",
-                  "","","","","","","pw","pb",
-                  "pw","pb","","","","","","",
-                  "enp","","cb","cb","","","","",
-                  "","p1w","p1w","p1w","p1w","p1w","p1w","p1w",
-                  "cw","hw","bw","qw","kw","bw","hw","cw"];/*["cb","hb","bb","qb","kb","bb","hb","cb",
+  "p1b","p1b","p1b","p1b","p1b","p1b","p1b","p1b",
+  "","","","","","","","",
+  "","","","","","","","",
+  "","","","","","","","",
+  "","","","","","","","",
+  "p1w","p1w","p1w","p1w","p1w","p1w","p1w","p1w",
+  "cw","hw","bw","qw","kw","bw","hw","cw"];/*["cb","hb","bb","qb","kb","bb","hb","cb",
                   "p1b","p1b","p1b","p1b","p1b","p1b","p1b","p1b",
                   "","","","","","","","",
                   "","","","","","","","",
@@ -43,6 +43,10 @@ function Chessboard(){
   }
 
   this.drawState = function() {
+    //check if i have lost!
+    if(this.lossChecker()){
+      alert("you lost, " + this.color);
+    }
     //print the board first
     var across = 0;
     var alternate = true;
@@ -109,33 +113,38 @@ function Chessboard(){
         this.drawState();
       }
       else {
-      this.movePiece(arrayLocation,xPos,yPos,xPosOld,yPosOld);
+      this.movePiece(arrayLocation,this.getBoardArrayPos([xPosOld,yPosOld]),false);
       }
     }
   }
 
-  this.checkCheckerForChanges = function(ArrayLocationProbed,ArrayLocationOriginal){
+  this.checkCheckerForChanges = function(ArrayLocationProbed,ArrayLocationOriginal){//will this move put me into check?
     xPos = this.getXYfromArrayPos(ArrayLocationProbed)[0];
     yPos = this.getXYfromArrayPos(ArrayLocationProbed)[1];
     xPosOld = this.getXYfromArrayPos(ArrayLocationOriginal)[0];
     yPosOld = this.getXYfromArrayPos(ArrayLocationOriginal)[1];
     var putIntoCheck = false;
     var temporaryPiece = this.gameState[this.getBoardArrayPos([xPosOld,yPosOld])];
+    var temporaryPiece2 = this.gameState[this.getBoardArrayPos([xPos,yPos])];
     this.gameState[this.getBoardArrayPos([xPos,yPos])] = this.gameState[this.getBoardArrayPos([xPosOld,yPosOld])];
     this.gameState[this.getBoardArrayPos([xPosOld,yPosOld])] = "";
     if(this.checkChecker()){
       putIntoCheck = true;
     }
     this.gameState[this.getBoardArrayPos([xPosOld,yPosOld])] = temporaryPiece;
-    this.gameState[this.getBoardArrayPos([xPos,yPos])] = "";
+    this.gameState[this.getBoardArrayPos([xPos,yPos])] = temporaryPiece2;
     return putIntoCheck;
   }
 
-  this.movePiece = function(moveTo,xPos,yPos,xPosOld,yPosOld){ //verify move
+  this.movePiece = function(moveTo,moveFrom,test){ //verify move
     var abort = false;
     var pieceAtMoveTo = this.gameState[moveTo];
-    var pieceToMove = this.gameState[this.pieceClicked];
+    var pieceToMove = this.gameState[moveFrom];
     var castling = false;
+    var xPos = this.getXYfromArrayPos(moveTo)[0];
+    var yPos = this.getXYfromArrayPos(moveTo)[1];
+    var xPosOld = this.getXYfromArrayPos(moveFrom)[0];
+    var yPosOld = this.getXYfromArrayPos(moveFrom)[1];
     distanceMovedX = xPosOld - xPos;
     distanceMovedY = yPosOld - yPos;
 
@@ -153,7 +162,6 @@ function Chessboard(){
     //piece verification
     if(pieceToMove.slice(pieceToMove.length-1,pieceToMove.length) == pieceAtMoveTo.slice(pieceAtMoveTo.length-1,pieceAtMoveTo.length)) { //if moving to spot with same color piece/attempting to castle
       if(!this.kingMoved && pieceAtMoveTo.slice(0, -1) == "c" && pieceToMove.slice(0,-1) == "k" && !this.checkChecker() && !this.inCheck) { //im castling!
-        console.log("atmp")
         var failed = false;
         castling = true;
         if(this.color == "w" && moveTo > this.pieceClicked &&  (this.gameState[this.pieceClicked+1] == "" && this.gameState[this.pieceClicked+2] == "")){ //castle left and white
@@ -186,7 +194,6 @@ function Chessboard(){
             this.gameState[56] = "";
             this.gameState[58] = "c"+this.color;
             moveTo += 1;
-            console.log("hi")
           }
         }
         else if(this.color == "b" && moveTo > this.pieceClicked && (this.gameState[this.pieceClicked+1] == "" && this.gameState[this.pieceClicked+2] == "" && this.gameState[this.pieceClicked+3] == "")){//castle left and white
@@ -282,22 +289,41 @@ function Chessboard(){
     this.gameState[this.pieceClicked] = pieceToMove;
 
     //if move being successful
+    //abort = false; //debug
+
+    if(!abort && test){
+      return true;
+    }
+    else if(abort && test){
+      return false;
+    }
+
     if(!abort) {
-      this.gameState[moveTo] = pieceToMove;
-      this.gameState[this.pieceClicked] = "";
-      this.pieceClicked = -1;
-      if(this.gameState.indexOf("enp") != -1){ //remove any enPassant missed opportunities.
-        this.gameState[this.gameState.indexOf("enp")] = "";
-      }
+      this.pieceUpdate(moveTo,pieceToMove,yPos);
+      var temp = this.enemyColor;
+      this.enemyColor = this.color;
+      this.color = temp;
+      this.gameState.reverse();
+      this.setupBoardPositions();
       this.drawState();
-      if(pieceToMove.slice(0,-1) == "p" && yPos == 0){
-        this.pickingPiece = moveTo;
-        this.pieceSwap();
-      }
     } //if move failed
     else{
       this.pieceClicked = -1;
       this.drawState();
+    }
+  }
+
+  this.pieceUpdate = function(moveTo,pieceToMove,yPos){
+    this.gameState[moveTo] = pieceToMove;
+    this.gameState[this.pieceClicked] = "";
+    this.pieceClicked = -1;
+    if(this.gameState.indexOf("enp") != -1){ //remove any enPassant missed opportunities.
+      this.gameState[this.gameState.indexOf("enp")] = "";
+    }
+    this.drawState();
+    if(pieceToMove.slice(0,-1) == "p" && yPos == 0){
+      this.pickingPiece = moveTo;
+      this.pieceSwap();
     }
   }
 
@@ -352,7 +378,6 @@ function Chessboard(){
             if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor && probe[0] >= 0 && probe[0] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
-              console.log(probe);
             }
             break;
           case "right":
@@ -439,7 +464,43 @@ function Chessboard(){
   }
 
   this.lossChecker = function(){
-
+    var kingLoc = this.gameState.indexOf("k"+this.color);
+    var kingLocXY = this.getXYfromArrayPos(kingLoc);
+    var friendlyPieces = [];
+    if(!this.checkChecker()){
+      console.log("Not in check.");
+      return false;
+    }
+    for(var i = 0;i<this.gameState.length;i++){
+      if(this.gameState[i].slice(this.gameState[i].length-1,this.gameState[i].length) == this.color && this.gameState[i] != "enp" && this.gameState[i] != "k"+this.color){
+        friendlyPieces.push([i,this.getXYfromArrayPos(i),this.gameState[i]]);
+      }
+    }
+    for(var i = -1;i<2;i+=1){ //can we move out of check?
+      for(var j = -1;j<2;j+=1){
+        var pieceAtSpot = this.gameState[this.getBoardArrayPosOffset(kingLocXY,i,j)];
+        if(this.gameState[this.getBoardArrayPosOffset(kingLocXY,i,j)] == "" || this.gameState[this.getBoardArrayPosOffset(kingLocXY,i,j)] == "enp" || this.gameState[this.getBoardArrayPosOffset(kingLocXY,i,j)].slice(pieceAtSpot.length-1,pieceAtSpot.length) == this.enemyColor){
+          if(!this.checkCheckerForChanges(this.getBoardArrayPosOffset(kingLocXY,i,j),kingLoc)){
+            console.log("Can move to: ", this.getXYfromArrayPos(this.getBoardArrayPosOffset(kingLocXY,i,j)));
+            return false;
+          }
+          //checkLocations.push([this.checkCheckerForChanges(this.getBoardArrayPosOffset(kingLocXY,i,j),kingLoc),this.getXYfromArrayPos(this.getBoardArrayPosOffset(kingLocXY,i,j))]);//(toBeprobed,original)
+        }
+      }
+    }
+    for(var i = 0;i<friendlyPieces.length;i++){
+      for(var j =0;j<this.gameState.length;j++){
+        if(this.gameState[j].slice(this.gameState[j].length-1,this.gameState[j].length) != this.color){
+          if(!this.checkCheckerForChanges(j,friendlyPieces[i][0])){
+            if(this.movePiece(j,friendlyPieces[i][0],true)){
+              console.log("Can move piece at: ", friendlyPieces[i][1], "to block check.");
+              return false;
+            }
+          }
+        }
+      }
+    }
+    return true;
   }
 
   this.determinePiecePath = function(piece,xPos,yPos,xPosOld,yPosOld){ //determine all positions a piece will pass to get to its final position. --excluding knights due to jump and kings due to 1step.
@@ -536,10 +597,10 @@ function Chessboard(){
 
   this.getBoardArrayPosOffset = function(xyPosition,xOffset,yOffset){
     if(xyPosition[0]+xOffset < 0 || xyPosition[0]+xOffset > 7){
-        xOffset = 0;
+        return (xyPosition[1])*8+(xyPosition[0]);
     }
     if(xyPosition[1]+yOffset < 0 || xyPosition[1]+yOffset > 7){
-        yOffset = 0;
+        return (xyPosition[1])*8+(xyPosition[0]);
     }
     return (xyPosition[1]+yOffset)*8+(xyPosition[0]+xOffset);
   }//get array pos but can deal with offsets.
