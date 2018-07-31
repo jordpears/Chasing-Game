@@ -5,7 +5,9 @@ sideBorder = 0.05*window.innerWidth;
 darkboard = document.getElementById('darkboard'); //background squares
 lightboard = document.getElementById('lightboard');
 
-function Chessboard(){
+gameKey = "";
+
+function Chessboard(myColor){
   this.gameState =
   ["cb","hb","bb","qb","kb","bb","hb","cb",
   "p1b","p1b","p1b","p1b","p1b","p1b","p1b","p1b",
@@ -25,7 +27,7 @@ function Chessboard(){
   this.boardPositions = [];
   this.pieceClicked = -1; //no piece clicked
   this.inCheck = false;
-  this.color = "w";
+  this.color = myColor;
   this.enemyColor = "";
   this.kingMoved = false;
   this.pickingPiece = -1;
@@ -80,6 +82,14 @@ function Chessboard(){
         across = 0;
       }
     }
+    //now redraw selection
+    if(this.pieceClicked != -1){
+      ctx.beginPath();
+      ctx.lineWidth="3";
+      ctx.strokeStyle="red";
+      ctx.rect(pieceSize*this.getXYfromArrayPos(this.pieceClicked)[0],pieceSize*this.getXYfromArrayPos(this.pieceClicked)[1],pieceSize,pieceSize);
+      ctx.stroke();
+    }
   }
 
   this.clicked = function(mouseX,mouseY){
@@ -113,7 +123,7 @@ function Chessboard(){
         this.drawState();
       }
       else {
-      this.movePiece(arrayLocation,this.getBoardArrayPos([xPosOld,yPosOld]),false);
+        this.movePiece(arrayLocation,this.getBoardArrayPos([xPosOld,yPosOld]),false);
       }
     }
   }
@@ -325,7 +335,8 @@ function Chessboard(){
       }
     }
     this.drawState();
-    if(pieceToMove.slice(0,-1) == "p" && yPos == 0){
+    serverPost();
+    if(pieceToMove.slice(0,-1) == "p" && yPos == 0){ //for pawn swap when at top.
       this.pickingPiece = moveTo;
       this.pieceSwap();
     }
@@ -634,6 +645,12 @@ function Chessboard(){
 
 window.onload = function() {
 
+  gameKey = window.location.href.slice(window.location.href.indexOf('?') + 9);
+  var myColor = "b";
+  serverGet();
+  setInterval(serverGet, 3000);
+
+
   var pieceSizeWidth = (window.innerWidth-sideBorder*2)/8.0;
   var pieceSizeHeight = (window.innerHeight-lowerBorder-upperBorder)/8.0;
   pieceSize = Math.min(pieceSizeWidth,pieceSizeHeight);
@@ -650,7 +667,11 @@ window.onload = function() {
 
   canvas.addEventListener("click",function(event){onClick(event);}); //set up click event listener
 
-  board = new Chessboard();
+  if(document.cookie.slice(6,-1).slice(1,document.cookie.length) == gameKey){
+    myColor = document.cookie.slice(6,-1).slice(0,1);
+  }
+
+  board = new Chessboard(myColor);
   board.drawState();
 }
 
@@ -667,11 +688,62 @@ function onClick(event){
   }
 }
 
-//debug stuff
-getGameStateTemp = function() {
+getGameState = function() {
   document.getElementById("gameStateEditor").value = JSON.stringify(board.gameState);
 }
-updateGameStateTemp = function() {
-  board.gameState = eval(document.getElementById("gameStateEditor").value);
+updateGameState = function(gameStateArray) {
+  if(gameStateArray == -1){
+    board.gameState = eval(document.getElementById("gameStateEditor").value);
+  }
+  else{
+    gameStateArray = JSON.parse(gameStateArray)
+    if(board.color == "b"){
+      gameStateArray.reverse();
+    }
+    board.gameState = gameStateArray;
+  }
   board.drawState();
+}
+
+serverPost = function(){
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var serverReply = this.responseText;
+      console.log(serverReply);
+    }
+  };
+  xhttp.open("POST", "http://34.255.134.38:8080/?gameKey="+gameKey, true);
+  //xhttp.open("POST", "http://localhost:8080/?gameKey="+gameKey, true);
+  if(board.color == "b"){
+    board.gameState.reverse();
+  }
+  xhttp.send(JSON.stringify({board:board.gameState,color:board.color}));
+  if(board.color == "b"){
+    board.gameState.reverse();
+  }
+}
+
+serverGet = function(){
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var serverReply = this.responseText;
+      updateGameState(serverReply);
+    }
+  };
+  gameKey = window.location.href.slice(window.location.href.indexOf('?') + 9);
+  xhttp.open("GET", "http://34.255.134.38:8080/?gameKey="+gameKey, true);
+  //xhttp.open("GET", "http://localhost:8080/?gameKey="+gameKey, true);
+  xhttp.send();
+}
+
+generateNewGame = function(){
+  var characters = "abcdefghijklmnopqrstuvwxyz123456789";
+  gameKey = "";
+  for( var i=0; i < 8; i++ ){
+    gameKey += characters[Math.floor(Math.random() * characters.length)];
+  }
+  console.log(gameKey);
+  window.location.assign(window.location.href.split('?')[0]+"?gameKey="+gameKey);
 }
