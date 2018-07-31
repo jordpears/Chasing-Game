@@ -667,10 +667,6 @@ window.onload = function() {
 
   canvas.addEventListener("click",function(event){onClick(event);}); //set up click event listener
 
-  if(document.cookie.slice(6,-1).slice(1,document.cookie.length) == gameKey){
-    myColor = document.cookie.slice(6,-1).slice(0,1);
-  }
-
   board = new Chessboard(myColor);
   board.drawState();
 }
@@ -726,13 +722,19 @@ serverPost = function(){
 
 serverGet = function(){
   xhttp = new XMLHttpRequest();
+  gameKey = window.location.href.slice(window.location.href.indexOf('?') + 9);
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       var serverReply = this.responseText;
       updateGameState(serverReply);
+      if(document.cookie.slice(6,-1).slice(1,document.cookie.length) == gameKey){
+        myColor = document.cookie.slice(6,-1).slice(0,1);
+        board.color = "w";
+        board.enemyColor = "b";
+        board.drawState();
+      }
     }
   };
-  gameKey = window.location.href.slice(window.location.href.indexOf('?') + 9);
   xhttp.open("GET", "http://34.255.134.38:8080/?gameKey="+gameKey, true);
   //xhttp.open("GET", "http://localhost:8080/?gameKey="+gameKey, true);
   xhttp.send();
