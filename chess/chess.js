@@ -659,6 +659,11 @@ function Chessboard(myColor){
 window.onload = function() {
 
   gameKey = window.location.href.slice(window.location.href.indexOf('?') + 9);
+  if(gameKey.length >12){
+    console.log("ERROR: NO GAME KEY");
+    window.location.assign("https://jordpears.github.io/chess/chesslander.html");
+    return;
+  }
 
   var pieceSizeWidth = (window.innerWidth-sideBorder*2)/8.0;
   var pieceSizeHeight = (window.innerHeight-lowerBorder-upperBorder)/8.0;

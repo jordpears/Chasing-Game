@@ -14,7 +14,7 @@ initialGameState = ["cb","hb","bb","qb","kb","bb","hb","cb","p1b","p1b","p1b","p
 var sqlConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "",//update when transferred to server
   database: "chess"
 });
 
