@@ -1,6 +1,7 @@
-var http = require('http');
+var https = require('https');
 var url = require('url');
 var mysql = require('mysql');
+var fs = require('fs');
 
 
 console.log('\n---===CHESS SERVER STARTED===---\n');
@@ -24,8 +25,13 @@ sqlConnection.connect(function(err) {
   SQLConnected = true;
 });
 
+var options = { //https things
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
+
 //set up server to listen for calls.
-http.createServer(function (httpRequest, httpResponse) {
+https.createServer(options,function (httpRequest, httpResponse) {
   var inputText = url.parse(httpRequest.url, true).query;
   var gameKey = inputText.gameKey;
   if(httpRequest.method == 'POST'){
