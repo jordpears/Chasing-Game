@@ -729,8 +729,8 @@ serverPost = function(){
       console.log(serverReply);
     }
   };
-  //xhttp.open("POST", "https://34.255.134.38:8080/?gameKey="+gameKey, true);
-  xhttp.open("POST", "https://localhost:8080/?gameKey="+gameKey, true);
+  xhttp.open("POST", "https://chessserver.tk:8080/?gameKey="+gameKey, true);
+  //xhttp.open("POST", "https://localhost:8080/?gameKey="+gameKey, true);
   if(board.color == "b"){
     board.gameState.reverse();
   }
@@ -785,8 +785,8 @@ serverGet = function(asynchronous){
       }
     }
   };
-  //xhttp.open("GET", "https://34.255.134.38:8080/?gameKey="+gameKey, asynchronous);
-  xhttp.open("GET", "https://localhost:8080/?gameKey="+gameKey, asynchronous);
+  xhttp.open("GET", "https://chessserver.tk:8080/?gameKey="+gameKey, asynchronous);
+  //xhttp.open("GET", "https://localhost:8080/?gameKey="+gameKey, asynchronous);
   xhttp.send();
 }
 

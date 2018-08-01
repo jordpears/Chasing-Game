@@ -1,4 +1,4 @@
-var https = require('https');
+var http = require('https');
 var url = require('url');
 var mysql = require('mysql');
 var fs = require('fs');
@@ -31,7 +31,7 @@ var options = { //https things
 };
 
 //set up server to listen for calls.
-https.createServer(options,function (httpRequest, httpResponse) {
+http.createServer(options,function (httpRequest, httpResponse) {
   var inputText = url.parse(httpRequest.url, true).query;
   var gameKey = inputText.gameKey;
   if(httpRequest.method == 'POST'){
