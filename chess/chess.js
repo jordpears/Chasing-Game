@@ -5,7 +5,9 @@ sideBorder = 0.05*window.innerWidth;
 darkboard = document.getElementById('darkboard'); //background squares
 lightboard = document.getElementById('lightboard');
 
-function Chessboard(){
+gameKey = "";
+
+function Chessboard(myColor){
   this.gameState =
   ["cb","hb","bb","qb","kb","bb","hb","cb",
   "p1b","p1b","p1b","p1b","p1b","p1b","p1b","p1b",
@@ -25,10 +27,12 @@ function Chessboard(){
   this.boardPositions = [];
   this.pieceClicked = -1; //no piece clicked
   this.inCheck = false;
-  this.color = "w";
+  this.color = myColor;
   this.enemyColor = "";
   this.kingMoved = false;
   this.pickingPiece = -1;
+  this.canMove = true;
+  this.loser = "";
 
   this.setupBoardPositions = function() {
     var across = 0;
@@ -43,10 +47,6 @@ function Chessboard(){
   }
 
   this.drawState = function() {
-    //check if i have lost!
-    if(this.lossChecker()){
-      alert("you lost, " + this.color);
-    }
     //print the board first
     var across = 0;
     var alternate = true;
@@ -80,6 +80,26 @@ function Chessboard(){
         across = 0;
       }
     }
+    //now redraw selection
+    if(this.pieceClicked != -1){
+      ctx.beginPath();
+      ctx.lineWidth="3";
+      ctx.strokeStyle="red";
+      ctx.rect(pieceSize*this.getXYfromArrayPos(this.pieceClicked)[0],pieceSize*this.getXYfromArrayPos(this.pieceClicked)[1],pieceSize,pieceSize);
+      ctx.stroke();
+    }
+    //check if i have lost!
+    if(this.lossChecker()){
+      this.loser = this.color;
+      serverPost();
+      clearInterval(intervalID);
+      if(board.color == "w"){
+          alert("YOU LOST, WHITE!!! :(");
+      }
+      else{
+        alert("YOU LOST, BLACK!!! :(");
+      }
+    }
   }
 
   this.clicked = function(mouseX,mouseY){
@@ -96,7 +116,7 @@ function Chessboard(){
     }
     var arrayLocation = yPos*8+xPos;
     if(this.pieceClicked == -1){
-      if(this.gameState[arrayLocation] != "" && this.gameState[arrayLocation].slice(this.gameState[arrayLocation].length-1,this.gameState[arrayLocation].length) == this.color){ //check not blank or enemy piece for selection
+      if(this.gameState[arrayLocation] != "" && this.gameState[arrayLocation].slice(this.gameState[arrayLocation].length-1,this.gameState[arrayLocation].length) == this.color && this.canMove){ //check not blank or enemy piece for selection or not my turn
           this.pieceClicked = arrayLocation;
           ctx.beginPath();
           ctx.lineWidth="3";
@@ -113,7 +133,7 @@ function Chessboard(){
         this.drawState();
       }
       else {
-      this.movePiece(arrayLocation,this.getBoardArrayPos([xPosOld,yPosOld]),false);
+        this.movePiece(arrayLocation,this.getBoardArrayPos([xPosOld,yPosOld]),false);
       }
     }
   }
@@ -325,9 +345,12 @@ function Chessboard(){
       }
     }
     this.drawState();
-    if(pieceToMove.slice(0,-1) == "p" && yPos == 0){
+    if(pieceToMove.slice(0,-1) == "p" && yPos == 0){ //for pawn swap when at top.
       this.pickingPiece = moveTo;
       this.pieceSwap();
+    }
+    else{
+      serverPost();
     }
   }
 
@@ -348,6 +371,7 @@ function Chessboard(){
           this.gameState[this.pickingPiece] = toBeDrawn[i]+this.color;
           this.pickingPiece = -1;
           this.drawState();
+          serverPost();
         }
       }
     }
@@ -634,6 +658,8 @@ function Chessboard(){
 
 window.onload = function() {
 
+  gameKey = window.location.href.slice(window.location.href.indexOf('?') + 9);
+
   var pieceSizeWidth = (window.innerWidth-sideBorder*2)/8.0;
   var pieceSizeHeight = (window.innerHeight-lowerBorder-upperBorder)/8.0;
   pieceSize = Math.min(pieceSizeWidth,pieceSizeHeight);
@@ -650,7 +676,18 @@ window.onload = function() {
 
   canvas.addEventListener("click",function(event){onClick(event);}); //set up click event listener
 
-  board = new Chessboard();
+  var myColor = "b";
+  board = new Chessboard(myColor);
+  serverGet(false);
+  intervalID = setInterval(function() { serverGet(true); }, 500);
+
+  var gameKeyOnCookie = document.cookie.slice(document.cookie.indexOf("gameKey=")+8,document.cookie.indexOf("gameKey=")+16);
+  var gameColorOnCookie = document.cookie.slice(document.cookie.indexOf("color=")+6,document.cookie.indexOf("color=")+7);
+
+  if(gameKeyOnCookie == gameKey){
+    myColor = gameColorOnCookie;
+  }
+  board = new Chessboard(myColor);
   board.drawState();
 }
 
@@ -667,11 +704,97 @@ function onClick(event){
   }
 }
 
-//debug stuff
-getGameStateTemp = function() {
+getGameState = function() {
   document.getElementById("gameStateEditor").value = JSON.stringify(board.gameState);
 }
-updateGameStateTemp = function() {
-  board.gameState = eval(document.getElementById("gameStateEditor").value);
+updateGameState = function(gameStateArray) {
+  if(gameStateArray == -1){
+    board.gameState = eval(document.getElementById("gameStateEditor").value);
+  }
+  else{
+    gameStateArray = JSON.parse(gameStateArray)
+    if(board.color == "b"){
+      gameStateArray.reverse();
+    }
+    board.gameState = gameStateArray;
+  }
   board.drawState();
+}
+
+serverPost = function(){
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var serverReply = this.responseText;
+      console.log(serverReply);
+    }
+  };
+  xhttp.open("POST", "http://34.255.134.38:8080/?gameKey="+gameKey, true);
+  //xhttp.open("POST", "http://localhost:8080/?gameKey="+gameKey, true);
+  if(board.color == "b"){
+    board.gameState.reverse();
+  }
+  xhttp.send(JSON.stringify({board:board.gameState,color:board.color,loser:board.loser}));
+  if(board.color == "b"){
+    board.gameState.reverse();
+  }
+}
+
+serverGet = function(asynchronous){
+  xhttp = new XMLHttpRequest();
+  gameKey = window.location.href.slice(window.location.href.indexOf('?') + 9);
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var serverReply = this.responseText;
+      if(serverReply.length == 1){
+        clearInterval(intervalID);
+        if(board.color == "w"){
+            alert("YOU WON, WHITE!!!");
+        }
+        else{
+          alert("YOU WON, BLACK!!!");
+        }
+      }
+      serverGameState = serverReply.slice(serverReply.indexOf("["),serverReply.length-1);
+      serverLastMoved = serverReply.slice(serverReply.length-1,serverReply.length);
+      if(serverReply.slice(serverReply.indexOf("]")+1,serverReply.length).length > 2){ //if first reply and new generation
+        var gameKeyGet = serverReply.slice(serverReply.indexOf("]")+2,serverReply.length);
+        var gameColorGet = serverReply.slice(serverReply.indexOf("]")+1,serverReply.indexOf("]")+2);
+        var d = new Date();
+        d.setTime(d.getTime() + (30*24*60*60*1000));
+        document.cookie = "color = w;expires="+d.toUTCString()+";";
+        document.cookie = "gameKey = "+gameKeyGet+";expires="+d.toUTCString()+";";
+        myColor = document.cookie.slice(6,-1).slice(0,1);
+        board.color = "w";
+        board.enemyColor = "b";
+        if(board.pickingPiece == -1){
+          updateGameState(serverReply.slice(serverReply.indexOf("["),serverReply.indexOf("]")+1));
+          board.drawState();
+        }
+      }
+      else{ //normal get
+        if(board.pickingPiece == -1 && board.pieceClicked == -1){
+          updateGameState(serverGameState);
+        }
+        if(board.color == ""+serverLastMoved){
+          board.canMove = false;
+        }
+        else{
+          board.canMove = true;
+        }
+      }
+    }
+  };
+  xhttp.open("GET", "http://34.255.134.38:8080/?gameKey="+gameKey, asynchronous);
+  //xhttp.open("GET", "http://localhost:8080/?gameKey="+gameKey, asynchronous);
+  xhttp.send();
+}
+
+generateNewGame = function(){
+  var characters = "abcdefghijklmnopqrstuvwxyz123456789";
+  gameKey = "";
+  for( var i=0; i < 8; i++ ){
+    gameKey += characters[Math.floor(Math.random() * characters.length)];
+  }
+  window.location.assign(window.location.href.split('?')[0]+"?gameKey="+gameKey);
 }
