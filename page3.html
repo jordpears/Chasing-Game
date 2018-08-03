@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <!-- Site made with Mobirise Website Builder v4.8.1, https://mobirise.com -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Mobirise v4.8.1, mobirise.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="assets/images/favicon-128x133.png" type="image/x-icon">
+  <meta name="description" content="Web Site Generator Description">
+  <title>BreakoutDocument</title>
+  <link rel="stylesheet" href="assets/web/assets/mobirise-icons/mobirise-icons.css">
+  <link rel="stylesheet" href="assets/tether/tether.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="assets/dropdown/css/style.css">
+  <link rel="stylesheet" href="assets/theme/css/style.css">
+  <link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css" type="text/css">
+  
+  
+  
+</head>
+<body>
+  <section class="menu cid-qZABJ1QX8z" once="menu" id="menu1-r">
+
+    
+
+    <nav class="navbar navbar-expand beta-menu navbar-dropdown align-items-center navbar-toggleable-sm">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+        <div class="menu-logo">
+            <div class="navbar-brand">
+                <span class="navbar-logo">
+                    <a href="index.html#header2-6">
+                         <img src="assets/images/favicon-83x87.png" alt="Mobirise" title="" style="height: 3.8rem;">
+                    </a>
+                </span>
+                
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true"><li class="nav-item dropdown open"><a class="nav-link link text-white dropdown-toggle display-4" href="https://mobirise.com" data-toggle="dropdown-submenu" aria-expanded="true">Multiplayer Chess</a><div class="dropdown-menu"><a class="text-white dropdown-item display-4" href="chess/chesslander.html">Game</a><a class="text-white dropdown-item display-4" href="page2.html">Write-Up</a></div></li><li class="nav-item dropdown"><a class="nav-link link text-white dropdown-toggle display-4" href="https://mobirise.com" aria-expanded="false" data-toggle="dropdown-submenu">Breakout</a><div class="dropdown-menu"><a class="text-white dropdown-item display-4" href="breakout/breakout.html" aria-expanded="false">Game</a><a class="text-white dropdown-item display-4" href="page3.html" aria-expanded="false">Write-Up</a></div></li><li class="nav-item dropdown"><a class="nav-link link text-white dropdown-toggle display-4" href="https://mobirise.com" aria-expanded="false" data-toggle="dropdown-submenu">Other</a><div class="dropdown-menu"><a class="text-white dropdown-item display-4" href="mousechaser/mousechasinggame.html" aria-expanded="false">Mouse Chasing Game [PC]<br></a></div></li></ul>
+            <div class="navbar-buttons mbr-section-btn"><a class="btn btn-sm btn-primary display-7" href="http://github.com/jordpears" target="_blank"><span class="mbri-github mbr-iconfont mbr-iconfont-btn"></span>GitHub</a> <a class="btn btn-sm btn-primary display-7" href="assets/files/Jordan%20Pears%20CV.pdf" target="_blank"><span class="mbri-file mbr-iconfont mbr-iconfont-btn"></span>CV Download</a></div>
+        </div>
+    </nav>
+</section>
+
+<section class="engine"><a href="https://mobiri.se/h">how to create a web page for free</a></section><section class="mbr-section content4 cid-qZABJ2wLmp" id="content4-s">
+
+    
+
+    <div class="container">
+        <div class="media-container-row">
+            <div class="title col-12 col-md-8">
+                <h2 class="align-center pb-3 mbr-fonts-style display-2">
+                    <br>Breakout Write-Up</h2>
+                
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mbr-section article content9 cid-qZABJ2SIz7" id="content9-t">
+    
+     
+
+    <div class="container">
+        <div class="inner-container" style="width: 100%;">
+            <hr class="line" style="width: 25%;">
+            <div class="section-text align-center mbr-fonts-style display-7"><strong>Aim</strong>: The aim of this project was to further my javascript skills being the second significant project I have undertaken, with the first one being the very rudamental mouse chasing game which has no mobile adaptions and is clunky. I wanted to do the project in pure JS and handle all mouse events manually.<br><br><strong>Execution</strong>: I used a HTML5 canvas to host the game and made this canvas match the size of the users screen for a full-screen experience. I created objects for each block, ball, and powerup. I also used an object to represent the dimensions of the paddle. Drawing from my experience developing the mouse chasing game I focussed on making every element of the game dynamically sized ensuring that the game will be correctly sized for any device using it. At the beginning of the game the parameters for the dimensions of every object is determined from the users size then the screen is populated with a selection of blocks of random primary colors and the paddle is placed on the screen at a set y-offset. This y-offset is increased significantly if the user is on a mobile to ensure that the paddle can be seen under the finger. The user starts with a new ball object on their paddle, the ball objects are inactive and do not move until the user clicks/taps the screen, which will deploy them in a random direction. The game updates at 60fps. Every iteration the balls are moved based on their velocity variables and the paddle is updated every time the user moves their mouse. Every iteration it is checked if any of the ball locations overlap with a paddle or a block or the game boundaries. If so they bounce reversing one of the x or y velocities depending on the direction of collision. The balls are contained in an array and are removed from the array if their y position goes over the bottom of the screen. If the array is empty then the game is lost and all elements are reset for the player to try again. As a bonus for players who may find the max speed too fast, every time a player loses the max speed will slightly decrease, making the game more accessible. There are also randomly dropping powerups which are created everytime a block is broken, these can be yellow or red. Red increases the size of the paddle up to some max value, and yellow gives the user an additional ball ready to deploy, these balls can be saved and deployed en masse. When all blocks are removed from the array containing them (done upon destruction) the game is won and for some fun 50 balls are randomly generated and activated on the screen for the player to knock about until all balls fall off the screen and the game is "lost" and regenerates. When the ball hits the paddle its rebound direction is determined by the side of the paddle it hits as in the original breakout game.<br><br><strong>How could it be improved</strong>: I chose to use a square collision box for the balls, this could be improved by using a circular one but would increase the calculations for each iteration and this rarely causes a problem. If i wanted more realistic collision mechanics I could have created a probe that checks if the next collision will pass through a block location because sometimes the distance of position change due to high velocity can clip through the corner of blocks. I could also add more gaming elements, it would not be challenging to add additional levels with varying block layouts or multiple hit blocks but I do not think I would learn much from this exercise.<br><br></div>
+            <hr class="line" style="width: 25%;">
+        </div>
+        </div>
+</section>
+
+
+  <script src="assets/web/assets/jquery/jquery.min.js"></script>
+  <script src="assets/popper/popper.min.js"></script>
+  <script src="assets/tether/tether.min.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+  <script src="assets/smoothscroll/smooth-scroll.js"></script>
+  <script src="assets/dropdown/js/script.min.js"></script>
+  <script src="assets/touchswipe/jquery.touch-swipe.min.js"></script>
+  <script src="assets/theme/js/script.js"></script>
+  
+  
+</body>
+</html>

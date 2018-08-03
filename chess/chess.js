@@ -389,28 +389,28 @@ function Chessboard(myColor){
         switch(directionToCheck){
           case "up":
             probe[1] -= 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor && probe[1] >= 0 && probe[1] < 8){
+            if((this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor) && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
             break;
           case "down":
             probe[1] += 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor && probe[1] >= 0 && probe[1] < 8){
+            if((this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor) && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
             break;
           case "left":
             probe[0] -= 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor && probe[0] >= 0 && probe[0] < 8){
+            if((this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor) && probe[0] >= 0 && probe[0] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
             break;
           case "right":
             probe[0] += 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor && probe[0] >= 0 && probe[0] < 8){
+            if((this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "c"+this.enemyColor) && probe[0] >= 0 && probe[0] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
@@ -418,7 +418,7 @@ function Chessboard(myColor){
           case "upleft":
             probe[0] -= 1;
             probe[1] -= 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
+            if((this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor) && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
@@ -426,7 +426,7 @@ function Chessboard(myColor){
           case "downleft":
             probe[0] -= 1;
             probe[1] += 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
+            if((this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor) && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
@@ -434,7 +434,7 @@ function Chessboard(myColor){
           case "upright":
             probe[0] += 1;
             probe[1] -= 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
+            if((this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor) && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
@@ -442,7 +442,7 @@ function Chessboard(myColor){
           case "downright":
             probe[0] += 1;
             probe[1] += 1;
-            if(this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
+            if((this.gameState[this.getBoardArrayPos(probe)] == "q"+this.enemyColor || this.gameState[this.getBoardArrayPos(probe)] == "b"+this.enemyColor) && probe[0] >= 0 && probe[0] < 8 && probe[1] >= 0 && probe[1] < 8){
               checked = true;
               console.log("Check from " + directionToCheck);
             }
@@ -496,7 +496,7 @@ function Chessboard(myColor){
     var kingLocXY = this.getXYfromArrayPos(kingLoc);
     var friendlyPieces = [];
     if(!this.checkChecker()){
-      console.log("Not in check.");
+      //console.log("Not in check.");
       return false;
     }
     for(var i = 0;i<this.gameState.length;i++){

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <!-- Site made with Mobirise Website Builder v4.8.1, https://mobirise.com -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Mobirise v4.8.1, mobirise.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="assets/images/favicon-128x133.png" type="image/x-icon">
+  <meta name="description" content="Web Site Generator Description">
+  <title>ChessDocument</title>
+  <link rel="stylesheet" href="assets/web/assets/mobirise-icons/mobirise-icons.css">
+  <link rel="stylesheet" href="assets/tether/tether.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="assets/dropdown/css/style.css">
+  <link rel="stylesheet" href="assets/theme/css/style.css">
+  <link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css" type="text/css">
+  
+  
+  
+</head>
+<body>
+  <section class="menu cid-qZAgixNEE4" once="menu" id="menu1-8">
+
+    
+
+    <nav class="navbar navbar-expand beta-menu navbar-dropdown align-items-center navbar-toggleable-sm">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+        <div class="menu-logo">
+            <div class="navbar-brand">
+                <span class="navbar-logo">
+                    <a href="index.html">
+                         <img src="assets/images/favicon-83x87.png" alt="Mobirise" title="" style="height: 3.8rem;">
+                    </a>
+                </span>
+                
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true"><li class="nav-item dropdown open"><a class="nav-link link text-white dropdown-toggle display-4" href="https://mobirise.com" data-toggle="dropdown-submenu" aria-expanded="true">Multiplayer Chess</a><div class="dropdown-menu"><a class="text-white dropdown-item display-4" href="chess/chesslander.html">Game</a><a class="text-white dropdown-item display-4" href="page2.html">Write-Up</a></div></li><li class="nav-item dropdown"><a class="nav-link link text-white dropdown-toggle display-4" href="https://mobirise.com" aria-expanded="false" data-toggle="dropdown-submenu">Breakout</a><div class="dropdown-menu"><a class="text-white dropdown-item display-4" href="breakout/breakout.html" aria-expanded="false">Game</a><a class="text-white dropdown-item display-4" href="page3.html" aria-expanded="false">Write-Up</a></div></li><li class="nav-item dropdown"><a class="nav-link link text-white dropdown-toggle display-4" href="https://mobirise.com" aria-expanded="false" data-toggle="dropdown-submenu">Other</a><div class="dropdown-menu"><a class="text-white dropdown-item display-4" href="mousechaser/mousechasinggame.html" aria-expanded="false">Mouse Chasing Game [PC]<br></a></div></li></ul>
+            <div class="navbar-buttons mbr-section-btn"><a class="btn btn-sm btn-primary display-7" href="http://github.com/jordpears" target="_blank"><span class="mbri-github mbr-iconfont mbr-iconfont-btn"></span>GitHub</a> <a class="btn btn-sm btn-primary display-7" href="assets/files/Jordan%20Pears%20CV.pdf" target="_blank"><span class="mbri-file mbr-iconfont mbr-iconfont-btn"></span>CV Download</a></div>
+        </div>
+    </nav>
+</section>
+
+<section class="engine"><a href="https://mobiri.se/b">create a site for free</a></section><section class="mbr-section content4 cid-qZAro3jhnY" id="content4-j">
+
+    
+
+    <div class="container">
+        <div class="media-container-row">
+            <div class="title col-12 col-md-8">
+                <h2 class="align-center pb-3 mbr-fonts-style display-2">
+                    <br>Chess Write-Up</h2>
+                
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mbr-section article content9 cid-qZAtMVotoH" id="content9-q">
+    
+     
+
+    <div class="container">
+        <div class="inner-container" style="width: 100%;">
+            <hr class="line" style="width: 25%;">
+            <div class="section-text align-center mbr-fonts-style display-7"><strong>Aim</strong>: The aim of this project was to develop server programming skills and back-end web development. I wanted to learn how to handle online resources and make a live multiplayer game in the process, I chose chess arbitrarily as it is not a fully live online game but still semi-live, and I personally enjoy playing the game.&nbsp;<br><br><strong>Client</strong>: The client was developed first and I tried to focus on the fact that it would be needed to incorporate multiplayer elements eventually. I did this by always treating the player as at the bottom moving upwards, this way the game is rendered the same for both black and white with the only difference being aesthetic. I stored the game state in an array of strings that denote the piece and the color. For example, a black pawn would be denoted by "pb". Each piece is rendered from a file stored on the website. I compelted this in pure javascript to further familiarise myself with the language and the final client code was over 700 lines long. I made the game object oriented by having a "board" object that stores the state of the board and any other important features the game board. &nbsp;The game is drawn by iterating through an 8x8 array of alternating yellow/brown colors, then the pieces are drawn on top of this by iterating through this array and the game state array and drawing on top of any sqaure that has a piece in it. Upon every redraw I check if the player has lost. I redraw every time the game state is updated by any means. Each click the user makes is assigned a square by finding the clicked location and cross referencing that against the locations of the 8x8 printed board array. If you click a piece the piece becomes highlighted and this selection is noted in the code. If the user clicks any other sqaure on the board a piece move function will check the piece can move there. This function first checks against the possible way that piece can move, then it ensures there is not a friendly peice there, then it checks for any pieces between the possible final spot and the starting spot, then it checks if the move would put the players king in check. This was significantly more involved than I expected. I handled the "check checking" by creating a copy of the game array with the changes I intend to make then I checked if this was putting me in check. I checked for check by creating a "probe" location on the king and temporarily moving this king-probe in all directions from the king until it hit a piece. If that pieces movement scheme matches the probes movement scheme then it threatens the king and the players is in check. I then check if the king can move to anywhere around itself and then see if that releases the check condition. I finally check if the player has lost by iterating through every friendly piece to see if moving it to that *allowed* position will release the king from check. If not then the player has lost.&nbsp;<br><br><strong>Server</strong>: The server was my first attempt at online development so I was mostly experimenting and learning as a developed. I chose to use Node.js for the server running and used SQL for the database back-end. I hosted the site on an AWS Micro EC2 instance (for free!). I chose to use a RESTful methodology for my server to adhere to best practices and therefor there are 2 types of requests that my server takes, GET (to get the game state) and POST (to update the game state). I handled the multiplayer aspect by assigning each game a game key, this is visible as a parameter on the url, in the form "www..../chess.html/?gameKey=&lt;gameKey&gt;". Upon loading the game makes an intial GET request to the server with the game key as an argument. The server then queries the database for this game key as a table. If no such table exists the server makes a new one with the following schema; "game state", "turn", "previously moved", "loser". The table name is the games key. The turn column is the primary key for the table and it is auto incremental. The loser column is blank until a client sents a POST declaring itself a loser, and the game state is updated each time a client sends a POST request as long as that client is not the same color as the previously updated one. The first person to generate the game is white and this is stored as a cookie on thier machine identifying the game key and the fact they are white. The next person to click this unique link will be black by default and will have no cookie. The client makes a GET request to the server every second to request any new updated states. This is achieved by looking up the highest turn number in the database and returning the game state for this turn number. Every time the player makes a move the client is sent a POST request with the new game state. I encountered significant difficulty making my server secure to be hosted online and not be flagged by users machines when they connect. For this I had to get a certified SSL certificate, which I managed to get free from LetsEncrypt, and I had to get a domain name for my server (so I now own chessserver.tk!). After fiddling about with the settings I managed to secure my server with https and successfully host it.<br><br><strong>How could it be improved</strong>: I could move further with this project by adding quality of life elements to the game such as previous move notifications and turn notifications but I feel that I have learnt what I wanted to from the development of the game. I could also further secure my server from SQL injection attacks as I am making the fatal error of allowing semi-raw input into my server. I could prevent cheating by moving all of the turn logic to the server, but again I do not think I would learn much from doing so. In the future I will try to extend my usage of object oriented practices, I could see the development being smoother if I had turned the pieces into objects for example.&nbsp;</div>
+            <hr class="line" style="width: 25%;">
+        </div>
+        </div>
+</section>
+
+
+  <script src="assets/web/assets/jquery/jquery.min.js"></script>
+  <script src="assets/popper/popper.min.js"></script>
+  <script src="assets/tether/tether.min.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+  <script src="assets/smoothscroll/smooth-scroll.js"></script>
+  <script src="assets/dropdown/js/script.min.js"></script>
+  <script src="assets/touchswipe/jquery.touch-swipe.min.js"></script>
+  <script src="assets/theme/js/script.js"></script>
+  
+  
+</body>
+</html>
