@@ -785,6 +785,7 @@ serverGet = function(asynchronous){
         if(board.color == ""+serverLastMoved){
           board.canMove = false;
           if(this.alertedToMove){
+            console.log("tes");
             this.alertedToMove = false;
           }
         }
