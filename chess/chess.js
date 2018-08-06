@@ -33,7 +33,7 @@ function Chessboard(myColor){
   this.pickingPiece = -1;
   this.canMove = true;
   this.loser = "";
-  this.alertedToMove;
+  this.alertedToMove = true;
 
   this.setupBoardPositions = function() {
     var across = 0;
@@ -784,14 +784,14 @@ serverGet = function(asynchronous){
         }
         if(board.color == ""+serverLastMoved){
           board.canMove = false;
-          if(this.alertedToMove){
-            this.alertedToMove = false;
+          if(board.alertedToMove){
+            board.alertedToMove = false;
           }
         }
         else{
           board.canMove = true;
-          if(!this.alertedToMove){
-            this.alertedToMove = true;
+          if(!board.alertedToMove){
+            board.alertedToMove = true;
             alert("It is your turn!");
           }
         }
