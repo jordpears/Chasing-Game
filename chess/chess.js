@@ -685,7 +685,7 @@ window.onload = function() {
   var myColor = "b";
   board = new Chessboard(myColor);
   serverGet(false);
-  intervalID = setInterval(function() { serverGet(true); }, 500);
+  intervalID = setInterval(function() { serverGet(true); }, 4000);
 
   var gameKeyOnCookie = document.cookie.slice(document.cookie.indexOf("gameKey=")+8,document.cookie.indexOf("gameKey=")+16);
   var gameColorOnCookie = document.cookie.slice(document.cookie.indexOf("color=")+6,document.cookie.indexOf("color=")+7);
