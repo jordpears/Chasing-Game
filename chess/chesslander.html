@@ -1,42 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html >
 <head>
+  <!-- Site made with Mobirise Website Builder v4.8.1, https://mobirise.com -->
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Mobirise v4.8.1, mobirise.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="../assets/images/favicon-128x133.png" type="image/x-icon">
+  <meta name="description" content="Web Maker Description">
+  <title>ChessLander</title>
+  <link rel="stylesheet" href="../assets/web/../assets/mobirise-icons/mobirise-icons.css">
+  <link rel="stylesheet" href="../assets/tether/tether.min.css">
+  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="../assets/dropdown/css/style.css">
+  <link rel="stylesheet" href="../assets/theme/css/style.css">
+  <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css" type="text/css">
+
+
+
 </head>
-<style>
-  body {
-    background-color: white;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    height: 100%;
+<body>
+  <section class="menu cid-qZAgixNEE4" once="menu" id="menu1-y">
+
+
+
+    <nav class="navbar navbar-expand beta-menu navbar-dropdown align-items-center navbar-toggleable-sm">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+        <div class="menu-logo">
+            <div class="navbar-brand">
+                <span class="navbar-logo">
+                    <a href="index.html">
+                         <img src="../assets/images/favicon-83x87.png" alt="Mobirise" title="" style="height: 3.8rem;">
+                    </a>
+                </span>
+
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true"><li class="nav-item dropdown open"><a class="nav-link link text-white dropdown-toggle display-4" href="https://mobirise.com" data-toggle="dropdown-submenu" aria-expanded="true">Multiplayer Chess</a><div class="dropdown-menu"><a class="text-white dropdown-item display-4" href="chess/chesslander.html">Game</a><a class="text-white dropdown-item display-4" href="page2.html">Write-Up</a></div></li><li class="nav-item dropdown"><a class="nav-link link text-white dropdown-toggle display-4" href="https://mobirise.com" aria-expanded="false" data-toggle="dropdown-submenu">Breakout</a><div class="dropdown-menu"><a class="text-white dropdown-item display-4" href="breakout/breakout.html" aria-expanded="false">Game</a><a class="text-white dropdown-item display-4" href="page3.html" aria-expanded="false">Write-Up</a></div></li><li class="nav-item dropdown"><a class="nav-link link text-white dropdown-toggle display-4" href="https://mobirise.com" aria-expanded="false" data-toggle="dropdown-submenu">Other</a><div class="dropdown-menu"><a class="text-white dropdown-item display-4" href="mousechaser/mousechasinggame.html" aria-expanded="false">Mouse Chasing Game [PC]<br></a></div></li></ul>
+            <div class="navbar-buttons mbr-section-btn"><a class="btn btn-sm btn-primary display-7" href="http://github.com/jordpears" target="_blank"><span class="mbri-github mbr-iconfont mbr-iconfont-btn"></span>GitHub</a> <a class="btn btn-sm btn-primary display-7" href="../assets/files/Jordan%20Pears%20CV.pdf" target="_blank"><span class="mbri-file mbr-iconfont mbr-iconfont-btn"></span>CV Download</a></div>
+        </div>
+    </nav>
+</section>
+
+<section class="engine"><a href="https://mobiri.se/d">website maker</a></section><section class="header4 cid-qZWGaFKhlZ" id="header4-11">
+
+
+
+
+
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="media-content col-md-10">
+                <h1 class="mbr-section-title align-center mbr-white pb-3 mbr-bold mbr-fonts-style display-1">Multiplayer Chess</h1>
+
+                <div class="mbr-text align-center mbr-white pb-3">
+                    <p class="mbr-text mbr-fonts-style display-5">To start a game press the below button, this will redirect you to your game. To share this game with player 2 simply share your unique link including your game key. When they click the link they will join your game as black.</p>
+                </div>
+                <div class="mbr-section-btn align-center"><a class="btn btn-md btn-primary display-4" onclick = generateNewGame()>GENERATE NEW GAME</a></div>
+            </div>
+            <div class="mbr-figure pt-5">
+                <img src="../assets/images/capture-536x530.png" alt="Mobirise" title="" style="width: 60%;">
+            </div>
+        </div>
+    </div>
+</section>
+
+
+  <script src="../assets/web/assets/jquery/jquery.min.js"></script>
+  <script src="../assets/popper/popper.min.js"></script>
+  <script src="../assets/tether/tether.min.js"></script>
+  <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+  <script src="../assets/smoothscroll/smooth-scroll.js"></script>
+  <script src="../assets/dropdown/js/script.min.js"></script>
+  <script src="../assets/touchswipe/jquery.touch-swipe.min.js"></script>
+  <script src="../assets/theme/js/script.js"></script>
+
+  <script>
+  generateNewGame = function(){
+    var characters = "abcdefghijklmnopqrstuvwxyz123456789";
+    gameKey = "";
+    for( var i=0; i < 8; i++ ){
+      gameKey += characters[Math.floor(Math.random() * characters.length)];
+    }
+    window.location.assign(window.location.href.replace("lander","").split('?')[0]+"?gameKey="+gameKey);
   }
-  canvas {
-    position: absolute;
-    border:1px solid black;
-    background-color: white;
-  }
-  .debug{
-    visibility:hidden;
-  }
-</style>
-
-<script>
-generateNewGame = function(){
-  var characters = "abcdefghijklmnopqrstuvwxyz123456789";
-  gameKey = "";
-  for( var i=0; i < 8; i++ ){
-    gameKey += characters[Math.floor(Math.random() * characters.length)];
-  }
-  window.location.assign(window.location.href.replace("lander","").split('?')[0]+"?gameKey="+gameKey);
-}
-</script>
-
-<div style="text-align: center;">
-<button type = "button" onclick=generateNewGame()>GENERATE NEW GAME</button>
-</div>
+  </script>
 
 
-
-
+</body>
 </html>

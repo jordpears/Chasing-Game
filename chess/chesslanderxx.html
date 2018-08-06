@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<style>
+  body {
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    height: 100%;
+  }
+  canvas {
+    position: absolute;
+    border:1px solid black;
+    background-color: white;
+  }
+  .debug{
+    visibility:hidden;
+  }
+</style>
+
+<script>
+generateNewGame = function(){
+  var characters = "abcdefghijklmnopqrstuvwxyz123456789";
+  gameKey = "";
+  for( var i=0; i < 8; i++ ){
+    gameKey += characters[Math.floor(Math.random() * characters.length)];
+  }
+  window.location.assign(window.location.href.replace("lander","").split('?')[0]+"?gameKey="+gameKey);
+}
+</script>
+
+<div style="text-align: center;">
+<button type = "button" onclick=generateNewGame()>GENERATE NEW GAME</button>
+</div>
+
+
+
+
+</html>
